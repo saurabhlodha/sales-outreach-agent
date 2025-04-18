@@ -17,6 +17,7 @@ from .utils import invoke_llm, get_report, get_current_date, save_reports_locall
 SEND_EMAIL_DIRECTLY = False
 # Enable or disable saving emails to Google Docs
 # By defauly all reports are save locally in `reports` folder
+# Set to True if you want to save reports to Google Docs
 SAVE_TO_GOOGLE_DOCS = False
 
 class OutReachAutomationNodes:
@@ -70,6 +71,7 @@ class OutReachAutomationNodes:
 
     def fetch_linkedin_profile_data(self, state: GraphState):
         print(Fore.YELLOW + "----- Searching Lead data on LinkedIn -----\n" + Style.RESET_ALL)
+        # print(state)
         lead_data = state["current_lead"]
         company_data = state.get("company_data", CompanyData())
         
@@ -184,6 +186,23 @@ class OutReachAutomationNodes:
         # Load states
         company_data = state["company_data"]
         
+        # Initialize report variables with empty content
+        youtube_analysis_report = Report(
+            title="Youtube Analysis Report",
+            content="No YouTube channel found or analysis not available.",
+            is_markdown=True
+        )
+        facebook_analysis_report = Report(
+            title="Facebook Analysis Report",
+            content="No Facebook profile found or analysis not available.",
+            is_markdown=True
+        )
+        twitter_analysis_report = Report(
+            title="Twitter Analysis Report",
+            content="No Twitter profile found or analysis not available.",
+            is_markdown=True
+        )
+
         # Get social media urls
         facebook_url = company_data.social_media_links.facebook
         twitter_url = company_data.social_media_links.twitter
@@ -451,6 +470,7 @@ class OutReachAutomationNodes:
             markdown=True
         )  
         
+        # print(f"new_doc: {new_doc}")
         return {
             "custom_outreach_report_link": new_doc["shareable_url"],
             "reports_folder_link": new_doc["folder_url"]
@@ -578,17 +598,17 @@ class OutReachAutomationNodes:
                     markdown=report.is_markdown
                 )
 
-        return state
+        return {"reports_folder_link": self.drive_folder_name}
 
     def update_CRM(self, state: GraphState):
         print(Fore.YELLOW + "----- Updating CRM records -----\n" + Style.RESET_ALL)
-        
+        # print(f"state: {state}")
         # save new record data, ensure correct fields are used
         new_data = {
             "Status": "ATTEMPTED_TO_CONTACT", # Set lead to attempted contact
             "Score": state["lead_score"], 
             "Analysis Reports": state["reports_folder_link"],
-            "Outreach Report": state["custom_outreach_report_link"],
+            "Outreach Report": state.get("custom_outreach_report_link"),
             "Last Contacted": get_current_date()
         }
         self.lead_loader.update_record(state["current_lead"].id, new_data)
