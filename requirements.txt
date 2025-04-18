@@ -10,7 +10,9 @@ pyairtable
 google-api-python-client
 google-auth-oauthlib
 google-auth-httplib2
+google-generativeai
 colorama
 python-dotenv
 bs4
 unstructured
+html2text
