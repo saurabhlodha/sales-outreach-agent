@@ -58,4 +58,5 @@ def scrape_linkedin(linkedin_url, is_company=False):
         data = response.json()
         return data
     else:
+        print(f"Request failed with error: {response.text}")
         print(f"Request failed with status code: {response.status_code}")
