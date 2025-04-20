@@ -20,6 +20,9 @@ SEND_EMAIL_DIRECTLY = False
 # Set to True if you want to save reports to Google Docs
 SAVE_TO_GOOGLE_DOCS = False
 
+# Adding test email address to temporarily skips emailing VCs
+TEST_EMAIL = os.environ['TEST_EMAIL']
+
 class OutReachAutomationNodes:
     def __init__(self, loader):
         self.lead_loader = loader
@@ -523,8 +526,8 @@ class OutReachAutomationNodes:
         # Send email directly
         if SEND_EMAIL_DIRECTLY:
             gmail.send_email(
-                recipient=email,
-                subject=subject,
+                recipient=TEST_EMAIL,
+                subject=f"{subject}-{email}",
                 email_content=personalized_email
             )
         
@@ -586,8 +589,8 @@ class OutReachAutomationNodes:
         reports = state["reports"]
         
         # Ensure reports are saved locally
-        save_reports_locally(reports)
-        
+        save_reports_locally(reports, self.drive_folder_name)
+
         # Save all reports to Google docs
         if SAVE_TO_GOOGLE_DOCS:
             for report in reports:

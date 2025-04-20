@@ -49,12 +49,13 @@ def get_report(reports, report_name: str):
             return report.content
     return ""
 
-def save_reports_locally(reports):
+def save_reports_locally(reports, folder_name):
     # Define the local folder path
-    reports_folder = "reports"
-    
+    reports_folder = f"reports/{folder_name}"
+
     # Create folder if it does not exist
     if not os.path.exists(reports_folder):
+        print(f"Creating folder: {reports_folder}")
         os.makedirs(reports_folder)
     
     # Save each report as a file in the folder
