@@ -74,6 +74,9 @@ class OutReachAutomationNodes:
             print(Fore.GREEN + "----- Finished, No more leads -----\n" + Style.RESET_ALL)
             return "No more leads"
 
+    def generate_prompt_from_pitch_deck(self, state: GraphState):
+        print(Fore.YELLOW + "----- Generating prompt from pitch deck -----\n" + Style.RESET_ALL)
+
     def fetch_linkedin_profile_data(self, state: GraphState):
         print(Fore.YELLOW + "----- Searching Lead data on LinkedIn -----\n" + Style.RESET_ALL)
         # print(state)
