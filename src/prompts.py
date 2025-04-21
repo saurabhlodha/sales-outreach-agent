@@ -575,3 +575,34 @@ Our solutions free up your team to focus on core priorities, driving measurable 
 - Ensure the conversation stays focused on their challenges and how ElevateAI can provide tailored solutions.  
 - Emphasize measurable results and time-saving benefits. 
 """
+
+PITCH_DECK_ANALYSIS_PROMPT = """
+You are an expert in analyzing company pitch decks. Review the provided pitch deck content and extract key information about the company.
+
+# Task
+Extract and summarize the following information in a structured format:
+
+1. Company Name and Description
+2. Core Products/Services
+3. Target Market/Customers
+4. Unique Value Proposition
+5. Key Benefits/Features
+6. Industry/Domain
+7. Sales Approach
+
+# Output Format
+CRITICAL: Your response must start with an opening curly brace '{' and end with a closing curly brace '}'. Do not include ANY text before or after the JSON object.
+Do not include the word 'json' or any other text. Just return the raw JSON object.
+
+Example of what to return (notice it starts with '{' and ends with '}'):
+{
+    "company_name": "string",
+    "description": "string",
+    "products_services": ["string"],
+    "target_market": "string",
+    "value_proposition": "string",
+    "benefits": ["string"],
+    "industry": "string",
+    "sales_approach": "string"
+}
+"""

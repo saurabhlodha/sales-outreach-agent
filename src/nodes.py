@@ -87,7 +87,7 @@ class OutReachAutomationNodes:
             
         # Analyze pitch deck content
         company_analysis = analyze_pitch_deck(pdf_content)
-        
+
         # Update company data in state
         company_data = CompanyData()
         company_data.description = company_analysis.get("description", "")
@@ -153,7 +153,6 @@ class OutReachAutomationNodes:
 
         # Scrape Twitter profile
         twitter_profile = get_twitter_timeline(twitter_handle)
-        print(f"Twitter Profile: {twitter_profile}")
         prompt = TWITTER_ANALYSIS_PROMPT.format(lead_name=lead_data.name)
         twitter_insight = invoke_llm(
             system_prompt=prompt, 
