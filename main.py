@@ -4,6 +4,7 @@ from src.graph import OutReachAutomation
 from src.state import *
 from src.tools.leads_loader.airtable import AirtableLeadLoader
 from src.tools.leads_loader.google_sheets import GoogleSheetLeadLoader
+from src.tools.draw_graph import draw_workflow_image
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -32,5 +33,11 @@ if __name__ == "__main__":
 
     # Run the outreach automation with the provided lead name and email
     config = {'recursion_limit': 1000}
+    # Check if workflow.png exists, if not generate it
+    if not os.path.exists("workflow.png"):
+        print("Generating workflow diagram...")
+        draw_workflow_image(app)
+        print("Workflow diagram saved as 'workflow.png'")
+
     output = app.invoke(inputs, config)
     print(output)
