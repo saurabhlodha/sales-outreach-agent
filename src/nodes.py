@@ -13,6 +13,7 @@ from .prompts import *
 from .state import LeadData, CompanyData, Report, GraphInputState, GraphState
 from .structured_outputs import WebsiteData, EmailResponse
 from .utils import invoke_llm, get_report, get_current_date, save_reports_locally
+from src.tools.base.pdf_tools import read_pdf_content, analyze_pitch_deck
 
 # Enable or disable sending emails directly using GMAIL
 # Should be confident about the quality of the email
@@ -76,6 +77,33 @@ class OutReachAutomationNodes:
 
     def generate_prompt_from_pitch_deck(self, state: GraphState):
         print(Fore.YELLOW + "----- Generating prompt from pitch deck -----\n" + Style.RESET_ALL)
+
+        # Read and analyze the pitch deck
+        pdf_path = os.getenv("PITCH_DECK_PATH", "data/decks/target.pdf")
+        pdf_content = read_pdf_content(pdf_path)
+        if not pdf_content:
+            print(Fore.RED + f"Error: Could not read pitch deck at {pdf_path}" + Style.RESET_ALL)
+            return "No more leads"
+            
+        # Analyze pitch deck content
+        company_analysis = analyze_pitch_deck(pdf_content)
+        
+        # Update company data in state
+        company_data = CompanyData()
+        company_data.description = company_analysis.get("description", "")
+        company_data.products_services = company_analysis.get("products_services", [])
+        company_data.target_market = company_analysis.get("target_market", "")
+        company_data.value_proposition = company_analysis.get("value_proposition", "")
+        company_data.benefits = company_analysis.get("benefits", [])
+        company_data.industry = company_analysis.get("industry", "")
+        company_data.sales_approach = company_analysis.get("sales_approach", "")
+        company_data.name = company_analysis.get("company_name", "")
+        
+        # Store company data in state
+        state["company_data"] = company_data
+        
+        print(Fore.GREEN + f"Successfully analyzed pitch deck for {company_data.name}" + Style.RESET_ALL)
+        return { "company_data": company_data }
 
     def fetch_linkedin_profile_data(self, state: GraphState):
         print(Fore.YELLOW + "----- Searching Lead data on LinkedIn -----\n" + Style.RESET_ALL)
