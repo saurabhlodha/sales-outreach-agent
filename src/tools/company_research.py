@@ -27,8 +27,17 @@ This profile provides context for engaging with a prospect who works at the comp
 def research_lead_company(linkedin_url):
     # Scrape company LinkedIn profile
     company_page_content = scrape_linkedin(linkedin_url, True)
-    if "data" not in company_page_content:
-        return "LinkedIn profile not found"
+    if not company_page_content or "data" not in company_page_content:
+        return {
+            "company_name": "",
+            "description": "LinkedIn profile not found",
+            "year_founded": "",
+            "industries": [],
+            "specialties": "",
+            "employee_count": "",
+            "headquarters": "",
+            "website": ""
+        }
     
     # Structure collected information about company
     company_profile = company_page_content["data"]

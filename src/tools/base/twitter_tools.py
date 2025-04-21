@@ -20,8 +20,9 @@ def extract_twitter_handle(lead_data_name, company_name):
     5. If no valid handle found, output an empty string 
     6. Return only one handle name that is best matching to the lead name 
     """
-    
-    query = f"Twitter {lead_data_name} {company_name}"
+    # Querring by company name does not always yield the correct results.
+    # Removing company name for now
+    query = f"Twitter {lead_data_name}"
     search_results = google_search(query)
 
     result = invoke_llm(
@@ -49,13 +50,28 @@ def get_twitter_timeline(twitter_handle, is_company=False):
       "x-rapidapi-host": "twitter-api45.p.rapidapi.com"
     }
 
-    response = requests.get(url, headers=headers, params=querystring)
-    if response.status_code == 200:
-        data = response.json()
-        twitter_data = f"""
-        Twitter timeline: {data}
-        """
-        return twitter_data
-    else:
-        print(f"Request failed with error: {response.text}")
-        print(f"Request failed with status code: {response.status_code}")
+    try:
+        response = requests.get(url, headers=headers, params=querystring)
+        response.raise_for_status()
+        
+        try:
+            data = response.json()
+            if not data:
+                print(f"No data returned for Twitter handle: {twitter_handle}")
+                return ""
+                
+            twitter_data = f"""
+            Twitter timeline: {data}
+            """
+            return twitter_data
+            
+        except requests.exceptions.JSONDecodeError as e:
+            print(f"Failed to parse Twitter API response: {e}")
+            print(f"Response content: {response.text}")
+            return ""
+            
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed with error: {e}")
+        if hasattr(e.response, 'status_code'):
+            print(f"Status code: {e.response.status_code}")
+        return ""

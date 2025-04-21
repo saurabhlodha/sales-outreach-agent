@@ -1,3 +1,4 @@
+import json
 import PyPDF2
 from src.utils import invoke_llm
 
@@ -44,9 +45,24 @@ def analyze_pitch_deck(pdf_content):
     }
     """
     
-    analysis = invoke_llm(
-        system_prompt=PITCH_DECK_ANALYSIS_PROMPT,
+    try:
+        analysis_str = invoke_llm(
+            system_prompt=PITCH_DECK_ANALYSIS_PROMPT,
         user_message=pdf_content,
         model="gemini-1.5-pro"
     )
-    return analysis
+        # Parse the response as JSON
+        analysis = json.loads(analysis_str)
+        return analysis
+    except json.JSONDecodeError as e:
+        print(f"Error parsing LLM response as JSON: {e}")
+        return {
+            "company_name": "",
+            "description": "",
+            "products_services": [],
+            "target_market": "",
+            "value_proposition": "",
+            "benefits": [],
+            "industry": "",
+            "sales_approach": ""
+        }

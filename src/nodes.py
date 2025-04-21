@@ -144,6 +144,13 @@ class OutReachAutomationNodes:
 
         # Find lead Twitter URL by searching on Google 'Twitter {{lead name}} {{company name}}'
         twitter_handle = extract_twitter_handle(lead_data.name, company_data.name)
+        if not twitter_handle:
+            print(f"Twitter handle not found for {lead_data.name}")
+            return {
+                "current_lead": lead_data,
+                "company_data": company_data
+            }
+
         # Scrape Twitter profile
         twitter_profile = get_twitter_timeline(twitter_handle)
         print(f"Twitter Profile: {twitter_profile}")
