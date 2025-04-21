@@ -26,6 +26,7 @@ class OutReachAutomation:
 
         # Research phase: gather data and insights about the lead
         graph.add_node("fetch_linkedin_profile_data", nodes.fetch_linkedin_profile_data)
+        graph.add_node("analyze_lead_social_profile", nodes.analyze_lead_social_profile)
         graph.add_node("review_company_website", nodes.review_company_website)
         graph.add_node("collect_company_information", nodes.collect_company_information)
         graph.add_node("analyze_blog_content", nodes.analyze_blog_content)
@@ -65,7 +66,8 @@ class OutReachAutomation:
         )
 
         # Research phase transitions
-        graph.add_edge("fetch_linkedin_profile_data", "review_company_website")
+        graph.add_edge("fetch_linkedin_profile_data", "analyze_lead_social_profile")
+        graph.add_edge("analyze_lead_social_profile", "review_company_website")
         graph.add_edge("review_company_website", "collect_company_information")
 
         # Collect company information and branch into various analyses
