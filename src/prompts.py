@@ -436,202 +436,96 @@ Your report should include the following five sections:
   - AI-driven social media automation across different platforms.  
   - AI blog content automation & SEO optimization. 
   - AI chatbots for website customer engagement.  
-  - AI voice agents for customers interactions 
-
-**4. Expected Results and ROI:**  
-- Use insights from our previous case study to showcase how we help them improve their business and achive better
-
-**5. Call to Action:**  
-- Suggest actionable next steps, such as scheduling a meeting to explore tailored AI solutions further.  
-
----
-
-# **Example Output:**
-
-# **Elevating GreenFuture Tech’s Digital Strategy with AI**  
 ---
 
 ## **Introduction**  
-At **ElevateAI Marketing Solutions**, we empower businesses to thrive in the digital age with AI-driven strategies tailored to their needs. From automating social media content and creating SEO-optimized blogs to boosting customer engagement with AI-powered agents, our solutions are designed to save time, maintain consistency, and deliver measurable results. 
+At **{company_name}**, {company_description}
 
-Our personalized approach and cutting-edge technology have enabled us to help companies like yours transform their digital presence into streamlined, lead-generating powerhouses. With proven expertise in enhancing marketing strategies across industries, we’re excited about the opportunity to partner with **GreenFuture Tech** to achieve measurable growth.  
+{value_proposition}
+
+With our key benefits:
+{benefits}
+
+We're excited about the opportunity to partner with **{target_company}** to achieve measurable growth in your industry.
 
 ---
 
 ## **Business Analysis**  
 
 ### **Company Overview:**  
-GreenFuture Tech is a sustainable technology company specializing in renewable energy solutions, such as solar panel systems, energy storage devices, and smart home integrations. With a mission to reduce carbon footprints and promote sustainable living, GreenFuture Tech has positioned itself as a pioneer in the renewable energy industry.  
+{target_company} is a {target_company_description} company specializing in {target_company_services}. With a mission to {target_company_mission}, {target_company} has positioned itself as a pioneer in the {target_company_industry} industry.  
 
 ### **Challenges Identified:**  
-- **Limited Digital Presence:** GreenFuture Tech's website has strong branding but lacks consistent blog updates and SEO-optimized content to attract organic traffic.  
+- **Limited Digital Presence:** {target_company}’s website has strong branding but lacks consistent blog updates and SEO-optimized content to attract organic traffic.  
 - **Low Social Media Engagement:** While active on social media, posts often lack targeted strategies, resulting in limited reach and engagement.  
 - **Customer Support Bottlenecks:** Increasing customer inquiries are straining support teams, leading to delayed responses.  
 
 ### **Potential for Improvement:**  
-- Establishing GreenFuture Tech as an industry thought leader through consistent, high-quality content.  
+- Establishing {target_company} as an industry thought leader through consistent, high-quality content.  
 - Driving audience engagement with strategic, AI-powered social media automation.  
 - Enhancing customer satisfaction with AI chatbots for real-time support.  
 
 ---
 
-### Proposed AI Solutions  
+### **Proposed Solutions**  
 
 **1. AI-Powered Advanced Content Creation & SEO Optimization for Blog**  
-* **Approach:** Leverage AI to generate in-depth articles on renewable energy trends, product comparisons (e.g., solar panels vs. energy storage devices), and long-form guides to sustainable living. Implement SEO optimization to improve organic search visibility and drive targeted traffic to the GreenFuture Tech website.  
-* **Benefit:** Our AI tools analyze industry trends and keyword data to identify high-impact topics. We’ll create a content calendar, automate blog generation, and ensure all content aligns with GreenFuture Tech’s brand voice and mission.  
+* **Approach:** Leverage AI to generate in-depth articles on {target_company_industry} trends, product comparisons (e.g., {target_company_services} vs. {target_company_services}), and long-form guides to {target_company_industry} living. Implement SEO optimization to improve organic search visibility and drive targeted traffic to the {target_company} website.  
+* **Benefit:** Our AI tools analyze industry trends and keyword data to identify high-impact topics. We’ll create a content calendar, automate blog generation, and ensure all content aligns with {target_company}’s brand voice and mission.  
 
 **2. AI-Driven Social Media Content Automation and Engagement**  
-* **Approach:** Use AI to automate the creation of platform-specific social media posts tailored to GreenFuture Tech’s audience and to analyze audience behavior and engagement patterns to refine strategies and amplify reach.  
+* **Approach:** Use AI to automate the creation of platform-specific social media posts tailored to {target_company}’s audience and to analyze audience behavior and engagement patterns to refine strategies and amplify reach.  
 * **Benefit:** Save time and boost audience engagement with consistent, high-quality posts. AI insights ensure campaigns are optimized for maximum reach and conversion, driving increased brand awareness and follower growth.  
 
 **3. AI-Powered Customer Support Chatbots**  
-* **Approach:** Deploy intelligent AI chatbots on GreenFuture Tech’s website to handle FAQs, provide product recommendations, and support customer inquiries in real time.  
+* **Approach:** Deploy intelligent AI chatbots on {target_company}’s website to handle FAQs, provide product recommendations, and support customer inquiries in real time.  
 * **Benefit:** Enhance customer satisfaction with instant responses, reduce support team workload, and improve operational efficiency. AI-powered chatbots provide 24/7 availability, ensuring seamless interactions and fostering loyalty.  
 
 ---
 
-### **Expected Results and ROI**  
+### **Expected Results**  
 
-Based on our success with **EcoSmart Solutions** (see [case study](https://elevateAI.com/case-studies/A)), a similar company in the renewable energy space:  
-- Increased organic traffic by 65% within six months through AI-powered content strategies.  
-- Boosted social media engagement by 40% and follower growth by 25% using automated, targeted campaigns.  
-- Reduced average response times from 6 hours to under 2 minutes with AI chatbots, leading to a 30% increase in customer satisfaction scores.  
-
-We anticipate achieving similar, if not better, results for GreenFuture Tech, aligning with its mission to scale sustainable energy solutions.  
+{expected_results}
 
 ---
 
-### **Call to Action**  
+### **Next Steps**  
 
-We’d love to discuss how these tailored solutions can help GreenFuture Tech achieve its goals. Let’s schedule a 30-minute call to explore opportunities and create a roadmap for success.  
+We'd love to discuss how these tailored solutions can help {target_company} achieve its goals. Let's schedule a 30-minute call to explore opportunities and create a roadmap for success.  
 
 **Next Steps:**  
 - Reply to this email with your availability.  
-- Visit [ElevateAI Marketing Solutions](https://elevateAI.com) for more insights into our services.  
+- We'll schedule a brief discovery call.  
 
-We look forward to partnering with you to power GreenFuture Tech’s digital transformation!  
-
---- 
-
-**Prepared by:**  Aymen  
-**ElevateAI Marketing Solutions** 
----
-
-# **Notes:**  
-- Ensure your report is data-driven, professional, and persuasive.  
-- Tailor every recommendation to the lead’s company unique context using both the research report and the case study.  
-- Highlight actionable insights and measurable outcomes to demonstrate the effectiveness of AI-driven strategies. 
-"""
-
-PROOF_READER_PROMPT = """
-# **Role:**  
-You are a **Professional Proofreader and Quality Analyst** specializing in ensuring the accuracy, structure, and completeness of professional documents. Your task is to analyze the final outreach report, ensuring it meets the highest standards of professionalism, clarity, and effectiveness.  
-
----
-
-# **Task:**  
-Your primary responsibilities are:  
-1. **Structural Analysis:** Verify that the report includes all required sections:  
-   - **Introduction**  
-   - **Business Analysis**  
-   - **Proposed AI Solutions**  
-   - **Expected Results and ROI**  
-   - **Call to Action**  
-
-2. **Content Completeness:** Ensure:  
-   - Each section addresses its intended purpose effectively.  
-   - All relevant links (e.g., company website, case studies, contact links) are included and functional.  
-   - Recommendations and examples are tailored to the specific lead’s context.  
-
-3. **Quality Enhancement: (If needed)**  
-   - Refine language to ensure clarity, conciseness, and professionalism.  
-   - Introduce minor enhancements, such as improved transitions or added examples, if necessary.  
-   - Add any missing or incorrect links while maintaining logical flow and accuracy.  
+We look forward to partnering with you!
 
 --- 
 
-# **Notes:**  
-- Return the **revised final report** in markdown format, without any additional text or preamble. 
-- Your goal is to refine the existing report, not rewrite it. Keep changes minimal but impactful.   
+**{company_name}** 
+
 """
-
-PERSONALIZE_EMAIL_PROMPT = """
-# **Role:**  
-
-You are an expert in B2B email personalization and outreach. Your task is to analyze the provided lead's LinkedIn and company details, and then craft an outreach personalized email to introduce them to our agency.
-
----
-
-# **Context**
-
-You are writing a cold outreach email to capture the lead’s interest and encourage them to schedule a call. The goal is to demonstrate how our AI solutions can address their specific challenges, align with their business goals, and drive measurable improvements.
-
----
-
-# **Guidelines:**  
-- Review the lead’s profile and company information for relevant insights.
-- Focus on recent Lead's and company experiences, but reference older ones if relevant.     
-- Write a short [Personalization] section of around 1-2 lines tailored to the lead's profile and its current company. 
-- Use a conversational, friendly and professional tone. 
-
-## **Example of personalizations:**
-
-- Your LinkedIn post about leveraging AI for personalized customer journeys was incredibly insightful. The way [Lead’s Company Name] has integrated these tools into your marketing campaigns sets a benchmark for the industry.  
-
-- I was impressed by your recent webinar on enhancing B2B lead nurturing strategies. The emphasis you placed on data-driven decision-making aligns perfectly with how we help marketing teams achieve better ROI through AI solutions.  
-
-- While reviewing [Lead’s Company Name]’s recent updates, I was impressed by the focus on optimizing multi-channel marketing strategies. The actionable insights your team is driving show a clear commitment to impactful results.  
-
-- I came across your LinkedIn profile and was impressed by your insights on optimizing sales funnels. Your recent campaign at [Lead’s Company Name] to improve lead conversion rates demonstrates a keen understanding of customer behavior and innovative strategies.   
-
----
-
-# **Email Template:**  
-
-Hi [First Name],
-
-[Personalization]
-
-At ElevateAI, we specialize in helping businesses like yours streamline operations and accelerate digital growth using AI solutions. We’ve helped several businesses in the [Lead’s Company industry] unlock the potential of AI to improve efficiency and customer engagement.
-
-After reviewing [Lead’s Company Name]’s digital presence, we’ve crafted a detailed audit report with key findings and insights on how we can help enhance your online strategy.
-
-Take a look [here](Link to Outreach Report)
-
-If you'd like to discuss how we can help you achieve more with AI, just shoot me a reply.
-
-Looking forward to your thoughts!
-
-Best regards,
-Aymen
-
----
-
-# **Notes:**  
-
-* Return only the final personalized email without any additional text or preamble.  
-* Ensure the report link and all personalization details are accurate.  
-* **DON’T:** use generic statements or make assumptions without evidence.  
-* **DON’T:** just praise the lead—focus on their experiences and background and on their company information.
-"""
-
 GENERATE_SPIN_QUESTIONS_PROMPT = """
-Write personalized multiple SPIN selling questions for the provided lead, demonstrating a clear understanding of their company and specific marketing or sales challenges. Focus on how **ElevateAI Marketing Solutions** can help address these issues effectively. Keep the questions concise and highly relevant.  
+Write personalized multiple SPIN selling questions for the provided lead, demonstrating a clear understanding of their company and specific challenges. Focus on how our solutions can help address these issues effectively. Keep the questions concise and highly relevant.  
 
-## **Agency Description**  
+## **Company Description**  
 
-**ElevateAI Marketing Solutions** empowers businesses to thrive in the digital age with AI-driven strategies that boost online visibility and engagement. We specialize in:  
-- **SEO Optimization**: Crafting high-ranking, search engine-friendly blog content to drive organic traffic.  
-- **Social Media Automation**: Scheduling platform-specific posts for Facebook, LinkedIn, TikTok, and more to maximize engagement.  
-- **Content Personalization**: Ensuring every piece reflects your unique voice and brand identity.  
+{target_company} is a {target_company_description} company specializing in {target_company_services}. With a mission to {target_company_mission}, {target_company} has positioned itself as a pioneer in the {target_company_industry} industry.  
 
-Our AI solutions save you time and resources while delivering consistent, authentic, and impactful messaging. By blending advanced technology with tailored strategies, **ElevateAI** turns your digital presence into a powerful driver of leads, sales, and growth.  
+## **Our Solutions**
+{products_services}
+
+## **Target Market**
+{target_market}
+
+## **Value Proposition**
+{value_proposition}
+
+## **Key Benefits**
+{benefits}
 
 ## **Notes:**  
 - Return only the SPIN questions, maximum of 15. 
-- Avoid generic or vague inquiries; base them on the provided lead details and agency capabilities.  
-- Focus on uncovering pain points, implications, and opportunities where ElevateAI's solutions can add value. 
+- Focus on uncovering pain points, implications, and opportunities where our solutions can add value. 
 """
 
 WRITE_INTERVIEW_SCRIPT_PROMPT = """
