@@ -25,11 +25,18 @@ class LeadData(BaseModel):
     profile: str = Field(..., description="The lead profile summary from LinkedIn data")
 
 class CompanyData(BaseModel):
-    name: str = ""
-    profile: str = ""
-    website: str = ""
-    social_media_links: SocialMediaLinks = SocialMediaLinks()
-    
+    name: str = Field("", description="The name of the company")
+    website: str = Field("", description="The company's website URL")
+    profile: str = Field("", description="The company's profile or summary")
+    description: str = Field("", description="Detailed description of the company")
+    products_services: List[str] = Field(default_factory=list, description="List of products and services offered")
+    target_market: str = Field("", description="Description of the target market")
+    value_proposition: str = Field("", description="The company's value proposition")
+    benefits: List[str] = Field(default_factory=list, description="List of key benefits offered")
+    industry: str = Field("", description="The industry the company operates in")
+    sales_approach: str = Field("", description="The company's sales approach")
+    social_media_links: SocialMediaLinks = Field(default_factory=SocialMediaLinks)
+
 class GraphInputState(TypedDict):
     leads_ids: List[str]
 
