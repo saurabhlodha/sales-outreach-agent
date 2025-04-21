@@ -16,3 +16,4 @@ python-dotenv
 bs4
 unstructured
 html2text
+PyPDF2
