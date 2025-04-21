@@ -1,7 +1,7 @@
 from src.utils import invoke_llm
 from .base.search_tools import google_search
 from .base.linkedin_tools import extract_linkedin_url, scrape_linkedin
-
+from colorama import Fore, Style
 
 SUMMARIZE_LINKEDIN_PROFILE = """
 # Role  
@@ -50,7 +50,7 @@ def research_lead_on_linkedin(lead_name, lead_email):
         return "Lead LinkedIn URL not found."
 
     # Scrape lead LinkedIn profile
-    print(f"Lead LinkedIn URL: {lead_linkedin_url}")
+    print(Fore.BLUE + f"Lead LinkedIn URL: {lead_linkedin_url}" + Style.RESET_ALL)
     linkedin_data = scrape_linkedin(lead_linkedin_url)
     if "data" not in linkedin_data:
         return "LinkedIn profile not found"

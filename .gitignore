@@ -6,3 +6,4 @@ src/tools/*/__pycache__/
 reports/*
 credentials.json
 token.json
+database/*/*.bin
