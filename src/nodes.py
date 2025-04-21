@@ -1,9 +1,11 @@
+import os
 from colorama import Fore, Style
 from .tools.base.markdown_scraper_tool import scrape_website_to_markdown
 from .tools.base.search_tools import get_recent_news
 from .tools.base.gmail_tools import GmailTools
 from .tools.google_docs_tools import GoogleDocsManager
 from .tools.lead_research import research_lead_on_linkedin
+from .tools.base.twitter_tools import extract_twitter_handle, get_twitter_timeline
 from .tools.company_research import research_lead_company, generate_company_profile
 from .tools.youtube_tools import get_youtube_stats
 from .tools.rag_tool import fetch_similar_case_study
@@ -102,6 +104,33 @@ class OutReachAutomationNodes:
             "current_lead": lead_data,
             "company_data": company_data,
             "reports": []
+        }
+
+    def analyze_lead_social_profile(self, state: GraphState):
+        print(Fore.YELLOW + "----- Analyzing Twitter profile -----\n" + Style.RESET_ALL)
+        lead_data = state.get("current_lead")
+        company_data = state.get("company_data")
+
+        # Find lead Twitter URL by searching on Google 'Twitter {{lead name}} {{company name}}'
+        twitter_handle = extract_twitter_handle(lead_data.name, company_data.name)
+        # Scrape Twitter profile
+        twitter_profile = get_twitter_timeline(twitter_handle)
+        print(f"Twitter Profile: {twitter_profile}")
+        prompt = TWITTER_ANALYSIS_PROMPT.format(lead_name=lead_data.name)
+        twitter_insight = invoke_llm(
+            system_prompt=prompt, 
+            user_message=twitter_profile,
+            model="gemini-1.5-flash"
+        )
+        twitter_analysis_report = Report(
+            title="Twitter Analysis Report",
+            content=twitter_insight,
+            is_markdown=True
+        )
+
+        return {
+            "current_lead": lead_data,
+            "reports": [twitter_analysis_report]
         }
     
     def review_company_website(self, state: GraphState):
@@ -240,7 +269,7 @@ class OutReachAutomationNodes:
             "company_data": company_data,
             "reports": [youtube_analysis_report]
         }
-    
+
     def analyze_recent_news(self, state: GraphState):
         print(Fore.YELLOW + "----- Analyzing recent news about company -----\n" + Style.RESET_ALL)
         
