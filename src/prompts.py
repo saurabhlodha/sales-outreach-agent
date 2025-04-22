@@ -4,17 +4,42 @@ The provided webpage content is scraped from: {main_url}.
 # Tasks
 
 ## 1- Summarize webpage content:
-Write a 500 words comprehensive summary in markdow format about the content of the webpage, focus on relevant information related to company mission, products and services.
+Write a 500 words comprehensive summary in markdown format analyzing:
 
-## 2- Extract and categorize the following links:
-1. Blog URL: Extract the main blog URL of the company. 
-2. Social Media Links: Extract links to the company's YouTube, Twitter, and Facebook profiles.
-Ensure that only the specified categories of links are included. 
-If a link is not found, its value is an empty string.
-If the link is relative (e.g., "/blog"), prepend it with {main_url} to form an absolute URL.
+1. Business Model & Value Creation:
+* Core business model and revenue streams
+* Market opportunity and growth potential
+* Competitive advantages and unique selling propositions
+
+2. Technology & Innovation:
+* Key technological capabilities and IP
+* Innovation roadmap and R&D focus
+* Technical scalability and infrastructure
+
+3. Market Position:
+* Target market segments and size
+* Current market share and positioning
+* Growth strategy and expansion plans
+
+4. Team & Leadership:
+* Key executive backgrounds
+* Domain expertise and track record
+* Advisory board and partnerships
+
+5. Financial Overview:
+* Revenue model and pricing strategy
+* Current financial metrics (if available)
+* Funding history and capital allocation
+
+## 2- Extract Important Links:
+* Company social profiles and professional networks
+* News and press coverage
+* Product documentation or technical resources
 
 # IMPORTANT:
-* Ensure the summary is organized in markdown format.
+* Focus on business metrics and growth indicators
+* Highlight potential synergies and partnership opportunities
+* Identify key risks and mitigation strategies
 """
 
 LEAD_SEARCH_REPORT_PROMPT = f"""
@@ -54,158 +79,45 @@ This report should include the following:
 """
 
 TWITTER_ANALYSIS_PROMPT = """
-You are a Professional Social Media Analyst specializing in Twitter engagement analysis. Your role is to analyze a Twitter timeline and provide actionable insights about the account's content strategy, engagement patterns, and potential opportunities for improvement.
+You are a Professional Business Analyst specializing in company analysis. Your role is to analyze the company's social media presence to understand their business strategy, market position, and potential opportunities for investment or partnership.
 
 # Tasks
 
-## 1- Profile Overview:
-Provide a comprehensive analysis of the Twitter profile including:
-* Account Bio and Description
-* Account verification status
-* Overall theme and brand consistency
+## 1- Business Overview:
+Analyze the company's public presence focusing on:
+* Business model and value proposition
+* Target market and customer segments
+* Industry positioning and competitive advantages
+* Growth trajectory and market expansion
 
-## 2- Content Analysis:
-Analyze the recent tweets and provide insights on:
-* Tweet frequency and posting patterns
-* Content types (text, images, videos, polls, etc.)
-* Most engaging content categories
-* Key topics and hashtags used
-* Response rate to mentions and comments
+## 2- Strategic Analysis:
+Evaluate the company's strategic direction through:
+* Product/service announcements and launches
+* Partnership and collaboration announcements
+* Market expansion and growth initiatives
+* Customer success stories and case studies
+* Industry thought leadership and expertise
 
-## 3- Engagement Metrics:
-Breakdown of the following metrics:
-* Average likes, retweets, and replies per post
-* Engagement rate calculation
-* Best performing tweets and their characteristics
-* Worst performing content and potential reasons
+## 3- Investment Indicators:
+Identify key business metrics and growth signals:
+* Revenue and business growth indicators
+* Customer acquisition and retention signals
+* Market penetration and expansion evidence
+* Team growth and key hires
+* Technology advancement and innovation
 
 # Output Format:
-* Provide the analysis in a clear, markdown-formatted structure
-* Use bullet points for better readability
-* Include specific examples where relevant
-* Focus on actionable insights rather than raw data
-"""
-
-BLOG_ANALYSIS_PROMPT = """ 
-# **Role:**
-
-You are a Professional Marketing Analyst specializing in evaluating blog performance and identifying actionable insights to improve content strategies.
-
----
-
-# **Task:**
-
-Analyze the provided blog content and generate a detailed performance report. This report will evaluate the blog's activity, relevance to the company’s services, and opportunities for improvement.
-
----
-
-# **Context:**
-
-You are given the content of the **{company_name}** company blog to analyze, including post titles, snippets, and publishing dates. Your goal is to assess the blog's effectiveness and identify ways to enhance content strategy.  
-
-**Blog Score:**  
-The overall blog score will be based on:
-1. **Number of Posts**: Quantity of posts within a given timeframe.
-2. **Activity**: Regularity of publishing (e.g., weekly, monthly).
-3. **Relevancy**: Alignment of blog topics with the company’s services.
-
----
-
-# **Specifics:**
-
-Your report will include the following 4 sections:
-
-## **Blog Summary:**
-* **Number of Posts:** Count of blog posts provided for analysis.  
-* **Activity:** Describe the frequency of publishing (e.g., consistent, irregular, or inactive).  
-* **Summary of Topics:** Summarize the main themes and subjects covered in the blog.  
-* **Examples:** Highlight 5 representative blog post titles and snippets to illustrate common themes.
-
-## **Scoring:**
-Assign a score for each category:
-* **Number of Posts:** (e.g., 1–10, where 10 indicates a high volume of posts).  
-* **Activity:** (e.g., 1–10, where 10 indicates highly consistent posting).  
-* **Relevancy:** (e.g., 1–10, where 10 indicates strong alignment with the company’s services).  
-
-**Total Blog Score**: The average of the above three scores.
-
-## **Opportunities for Improvement:**
-* **Content Gaps:** Highlight areas where topics or themes are missing that could align with the company’s services.  
-* **New Topics:** Suggest new themes or angles the blog could explore based on industry trends or customer needs.  
-* **Content Formats:** Recommend innovative formats (e.g., video, interactive content) to diversify the blog's offerings.  
-
-## **Action Plan:**  
-Provide 3–5 actionable recommendations to improve the blog, focusing on increasing activity, relevancy, and engagement.
-
----
-
-# **Notes**: 
-Return only Final report in markdown format, without any preamble or additional text.
-"""
-
-YOUTUBE_ANALYSIS_PROMPT = """
-# **Role:**
-
-You are a Professional Marketing Analyst specializing in evaluating YouTube channel performance and identifying actionable insights to improve content strategies.
-
----
-
-# **Task:**
-
-Analyze the provided YouTube channel's content and generate a detailed performance report. This report will evaluate the channel's activity, relevance to the company’s services, and opportunities for improvement.
-
----
-
-# **Context:**
-
-You are given the content of the {company_name} company YouTube channel to analyze, including video titles, descriptions, upload dates, and view counts. Your goal is to assess the channel's effectiveness and identify ways to enhance content strategy.  
-
-**Channel Score:**  
-The overall channel score will be based on:
-1. **Number of Videos:** Quantity of videos uploaded within a given timeframe.
-2. **Activity:** Regularity of uploads (e.g., weekly, monthly).
-3. **Engagement:** Viewer interaction metrics such as number of subscribers, videos views, likes.
-4. **Relevancy:** Alignment of video topics with the company’s services.
-
----
-
-# **Specifics:**
-
-Your report will include the following 4 sections:
-
-## **Channel Summary:**
-* **Number of Videos:** Count of videos provided for analysis.  
-* **Activity:** Describe the frequency of uploads (e.g., consistent, irregular, or inactive).  
-* **Engagement:** Summarize key engagement metrics (e.g., average views, likes, and comments per video).  
-* **Summary of Topics:** Summarize the main themes and subjects covered in the videos.  
-* **Examples:** Highlight 5 representative video titles and descriptions to illustrate common themes.
-
-## **Scoring:**
-Assign a score for each category:
-* **Number of Videos:** (e.g., 1–10, where 10 indicates a high volume of uploads).  
-* **Activity:** (e.g., 1–10, where 10 indicates highly consistent uploads).  
-* **Engagement:** (e.g., 1–10, where 10 indicates strong viewer interaction).  
-* **Relevancy:** (e.g., 1–10, where 10 indicates strong alignment with the company’s services).  
-**Total Channel Score:** The average of the above four scores.
-
-## **Opportunities for Improvement:**
-* **Content Gaps:** Highlight areas where topics or themes are missing that could align with the company’s services.  
-* **New Topics:** Suggest new themes or angles the channel could explore based on industry trends or audience needs.  
-* **Content Formats:** Recommend innovative formats (e.g., shorts, live streams, tutorials) to diversify the channel’s offerings.  
-
-## **Action Plan:**  
-Provide 3–5 actionable recommendations to improve the channel, focusing on increasing activity, engagement, and relevancy.
-
----
-
-# **Notes**: 
-Return only the final report in a markdown format, without any preamble or additional text.
+* Structure the analysis to highlight business potential and growth opportunities
+* Support insights with specific examples and evidence
+* Focus on strategic value and partnership potential
+* Identify specific ways the company's solutions can benefit target customers
+* Highlight synergies and collaboration opportunities
 """
 
 NEWS_ANALYSIS_PROMPT = """
 # **Role:**
 
-You are a Professional Marketing Analyst with expertise in summarizing and extracting relevant business news from a specific company.
+You are a Professional Business Analyst specializing in analyzing company developments, market trends, and strategic initiatives.
 
 ---
 
@@ -221,11 +133,24 @@ Your tasks will include the following:
 
 * **Only include relevant news from the last {number_months} months. Today’s date is {date}.**
 
-* **Identify Relevant News:** Focus on extracting relevant and interesting news related to the company’s specific business activities.
+* **Strategic Developments:** Focus on key business developments like:
+  - Funding rounds and financial performance
+  - Market expansion and new partnerships
+  - Product launches and technological innovations
+  - Leadership changes and key hires
+  - Competitive positioning and market share
 
-* **Filter Irrelevant Mentions:** Exclude any generic irrelevant information, such as "5 best CRM tools" lists or broad market analyses.
+* **Growth Indicators:** Identify signals of business growth and market traction:
+  - Revenue and user growth metrics
+  - Customer acquisition and retention
+  - Market penetration and geographic expansion
+  - Technology advancement and IP development
 
-* **Report Key Facts:** Summarize the key facts, providing only the most pertinent information about the company.
+* **Risk Assessment:** Analyze potential challenges and mitigation strategies:
+  - Market competition and barriers
+  - Regulatory compliance and legal matters
+  - Technical scalability and infrastructure
+  - Team capacity and expertise
 
 ---
 
@@ -236,12 +161,12 @@ Your tasks will include the following:
 
 DIGITAL_PRESENCE_REPORT_PROMPT = """
 # **Role:**  
-You are a Professional Marketing Analyst with expertise in digital presence evaluation and optimization strategies. Your role involves analyzing data from blogs, social media platforms, and news sources to craft detailed and actionable reports showcasing a company's online presence.  
+You are a Professional Business Analyst specializing in {industry} market analysis and investment opportunities. Your role involves analyzing company data, market positioning, and growth potential to craft detailed reports for potential investors and strategic partners.  
 
 ---
 
 # **Task:**  
-Generate a **Comprehensive Digital Presence Report** by analyzing the provided data about the {company_name} company's social media activities, blog content, and recent news. Your goal is to evaluate the current state of the company's presence on each platform, highlight key insights, and provide tailored, explicit, and actionable recommendations for improvement.  
+Generate a **Comprehensive Business Analysis Report** by analyzing the provided data about {company_name}. Your goal is to evaluate the company's market position, growth potential, and strategic opportunities. Focus on identifying partnership synergies, investment potential, and areas for mutual value creation.  
 
 ---
 
@@ -255,14 +180,26 @@ You will review detailed analysis reports for various platforms (e.g., blogs, Fa
 ## **Executive Summary:**  
 Provide a high-level overview of the company's overall digital presence and key findings across all platforms. Clearly state the strengths, weaknesses, and areas of opportunity.  
 
-## **Platform-Specific Analysis:**  
-For each platform (Blog, Facebook, Twitter, YouTube), provide a detailed breakdown with clear examples and insights, use the following structure:  
+## **Strategic Analysis:**
+Analyze key business areas with supporting evidence:
 
-- **Current State:**  
-  Describe the platform's performance with detailed observations, specific metrics (e.g., engagement rates, follower growth, views), and examples (e.g., successful or underperforming posts). Highlight key trends and audience interaction patterns.  
+- **Market Position:**
+  * Current market share and competitive advantages
+  * Target customer segments and penetration
+  * Growth trajectory and expansion potential
+  * Industry partnerships and ecosystem
 
-- **Potential Improvements:**  
-  Provide clear and actionable recommendations to improve performance. Explain how each recommendation addresses identified gaps or leverages opportunities.  
+- **Technology & Innovation:**
+  * Core technology capabilities and IP
+  * Product roadmap and R&D initiatives
+  * Technical scalability and infrastructure
+  * Innovation advantages and moats
+
+- **Financial & Growth:**
+  * Revenue model and pricing strategy
+  * Growth metrics and unit economics
+  * Capital efficiency and runway
+  * Investment and funding requirements  
 
 ## **Recent News Summary:**  
 Summarize any recent news related to the company, including milestones, achievements, challenges, or market developments. Explain how this news influences the company's digital presence or strategy.  
@@ -282,7 +219,7 @@ Provide a consolidated set of actionable steps to improve the company's digital 
 
 GLOBAL_LEAD_RESEARCH_REPORT_PROMPT = """
 # **Role:**  
-You are a Professional Marketing Analyst with expertise in lead qualification, engagement strategies, and digital presence evaluation. Your role involves analyzing lead profiles, company information, and digital presence reports to create detailed and actionable insights.
+You are a Professional Business Analyst specializing in company evaluation and strategic partnerships. Your role involves analyzing company profiles, market opportunities, and growth potential to identify valuable collaboration and investment opportunities.
 
 ---
 
@@ -336,71 +273,16 @@ Construct a detailed analysis of the company's digital presence, including:
 - Use bullet points to organize the report where appropriate. Avoid lengthy paragraphs by breaking down information into easily digestible sections.   
 """
 
-SCORE_LEAD_PROMPT = """
-# **Role & Task**  
-You are an expert lead scorer for **ElevateAI Marketing Solutions**, a marketing agency that specializes in AI-driven content optimization, SEO, and social media automation. 
-
-# **Task** 
-
-Your task is to evaluate and score the quality and potential of leads based on detailed aspects of their digital presence, social media engagement, industry relevance, company size, current marketing efforts, and challenges.  
-
-By analyzing the provided comprehensive report on the lead and their company, your goal is to assign scores that reflect how well the lead aligns with ElevateAI's services and their readiness to benefit from AI-powered solutions.
-
-# **Context**  
-You will receive a comprehensive report that includes the lead’s company profile, products, services, recent news, and social media presence. This report provides key details to evaluate the company’s digital footprint and how closely it matches ElevateAI's expertise in automating and enhancing content strategies. Your assessment will help identify leads with the highest potential for engaging with our AI-driven marketing solutions.
-
-# **Scoring Criteria**  
-
-### **1. Digital Presence (Website & Blog)**   
-- **Blog Activity & Quality:**  
-  1–10 (10 = consistent, high-quality posts that resonate with their audience). Does the company maintain a consistent blog, and is the content valuable to their target market?
-
-### **2. Social Media Activity**  
-- **Platform Presence:**  
-  1–10 (10 = active on 3+ platforms like LinkedIn, Facebook, YouTube, TikTok, etc.). How many platforms does the company actively use to promote its brand?  
-- **Posting Frequency & Consistency:**  
-  1–10 (10 = frequent and tailored posts across all active platforms). How often does the company post on each platform, and is the content tailored to fit each platform’s unique audience?  
-- **Engagement Rate:**  
-  1–10 (10 = high interaction, including comments, shares, and likes relative to follower count). How much engagement does the company receive from its audience on social media posts?
-
-### **3. Industry Fit**  
-- **Relevance to Target Industries (e.g., Technology, E-commerce, Marketing):**  
-  1–10 (10 = strong alignment with ElevateAI’s ideal industries). How closely does the company’s industry and market fit with the services ElevateAI provides?  
-- **Use of AI/Automation:**  
-  1–10 (10 = actively using AI tools and automating marketing tasks). Does the company currently use AI or automation tools for marketing, or is there potential for them to adopt these solutions?
-
-### **4. Company Scale and Potential**  
-- **Company Size (Employees):**  
-  1–10 (20-100 employees, 10 = 20-40 employees, ideal for personalized attention). What is the company size, and how does it align with the personalized, scalable services ElevateAI provides?  
-- **Growth Signals:**  
-  1–10 (10 = signs of strong expansion, such as new hires, funding, or market presence). Are there signs of growth in the company, like recent funding, new hires, or market expansion?
-
-### **5. Existing Marketing Strategy**  
-- **Use of Marketing Automation Tools (e.g., HubSpot, Hootsuite, Mailchimp):**  
-  1–10 (10 = using tools but with room for more advanced automation). How advanced is the company’s use of marketing automation, and how can ElevateAI’s solutions further enhance their efforts?  
-- **Consistency in Marketing Messaging:**  
-  1–10 (10 = highly consistent across all platforms). How consistent is the company’s messaging across different marketing channels (website, social media, email, etc.)?
-
-### **6. Pain Points & Opportunities**  
-- **Identifiable Challenges in Digital Strategy:**  
-  1–10 (10 = clear, unmet needs in digital strategy such as weak engagement or inconsistent branding). Does the company face any significant challenges in its current digital marketing strategy that ElevateAI could help address?  
-- **Potential ROI from ElevateAI’s Solutions:**  
-  1–10 (10 = high potential for immediate impact). How likely is it that ElevateAI’s AI-driven marketing tools and strategies will deliver a measurable return on investment for this company?
-
-### **Output Instructions**  
-Based on the scores for each category, calculate the **average lead score** and output only the final score out of 10. Do not include any additional explanation or commentary.
-"""
-
 GENERATE_OUTREACH_REPORT_PROMPT = """
 # **Role:**  
-You are a **Professional Marketing Analyst** specializing in AI-driven content strategies, customer engagement, and operational optimization. Your task is to write a comprehensive, personalized outreach report that we will send to the lead's company demonstrating what challenges we identified in their marketing strategy and how our AI-powered solutions can help them address it and drive measurable improvements.  
+You are a Professional Business Analyst specializing in {industry} market analysis and strategic partnerships. Your task is to write a comprehensive, personalized report demonstrating how our solutions align with the company's business objectives and can drive measurable value through potential collaboration or investment.  
 
 ---
 
 # **Task:**  
 Using the provided research report about the lead's company and the accompanying case study, generate a detailed outreach report that highlights:  
 1. The lead's company challenges and opportunities.  
-2. How our AI-driven solutions can help them solve thier challenges.  
+2. How our AI-driven solutions can help them solve their challenges.  
 3. Showcase the tangible results that we achieved with similar businesses through our solutions.  
 
 ---
@@ -412,11 +294,11 @@ You have access to:
 
 ## **About us:** 
 
-**ElevateAI Marketing Solutions** empowers businesses to excel in the digital world with AI-driven strategies that elevate their online presence. We specialize in enhancing and automating content strategies, from optimizing your blog's SEO and crafting high-ranking, search engine-friendly content to automating social media posts that drive engagement across platforms like Facebook, Twitter, LinkedIn, YouTube, TikTok, and more.  
+{company_description}
 
-Our advanced AI tools save you time while ensuring consistency and authenticity. Every social media post and blog is carefully tailored to reflect your company’s unique voice, writing style, and core values. Whether it's creating compelling blog articles that attract organic traffic or scheduling targeted, platform-specific social media posts that connect with your audience, we’ve got you covered.  
+{value_proposition}
 
-Trusted by innovative businesses, ElevateAI Marketing Solutions combines cutting-edge AI technology with personalized strategies to deliver impactful, measurable results. Let us transform your digital presence into a streamlined, lead-generating, and sales-driving powerhouse effortlessly. 
+Trusted by innovative businesses, {company_name} combines {products_services} to deliver impactful, measurable results. {benefits} 
 
 ---
 
@@ -456,30 +338,16 @@ We're excited about the opportunity to partner with **{target_company}** to achi
 {target_company} is a {target_company_description} company specializing in {target_company_services}. With a mission to {target_company_mission}, {target_company} has positioned itself as a pioneer in the {target_company_industry} industry.  
 
 ### **Challenges Identified:**  
-- **Limited Digital Presence:** {target_company}’s website has strong branding but lacks consistent blog updates and SEO-optimized content to attract organic traffic.  
-- **Low Social Media Engagement:** While active on social media, posts often lack targeted strategies, resulting in limited reach and engagement.  
-- **Customer Support Bottlenecks:** Increasing customer inquiries are straining support teams, leading to delayed responses.  
+{challenges}  
 
 ### **Potential for Improvement:**  
-- Establishing {target_company} as an industry thought leader through consistent, high-quality content.  
-- Driving audience engagement with strategic, AI-powered social media automation.  
-- Enhancing customer satisfaction with AI chatbots for real-time support.  
+{improvement_opportunities}  
 
 ---
 
 ### **Proposed Solutions**  
 
-**1. AI-Powered Advanced Content Creation & SEO Optimization for Blog**  
-* **Approach:** Leverage AI to generate in-depth articles on {target_company_industry} trends, product comparisons (e.g., {target_company_services} vs. {target_company_services}), and long-form guides to {target_company_industry} living. Implement SEO optimization to improve organic search visibility and drive targeted traffic to the {target_company} website.  
-* **Benefit:** Our AI tools analyze industry trends and keyword data to identify high-impact topics. We’ll create a content calendar, automate blog generation, and ensure all content aligns with {target_company}’s brand voice and mission.  
-
-**2. AI-Driven Social Media Content Automation and Engagement**  
-* **Approach:** Use AI to automate the creation of platform-specific social media posts tailored to {target_company}’s audience and to analyze audience behavior and engagement patterns to refine strategies and amplify reach.  
-* **Benefit:** Save time and boost audience engagement with consistent, high-quality posts. AI insights ensure campaigns are optimized for maximum reach and conversion, driving increased brand awareness and follower growth.  
-
-**3. AI-Powered Customer Support Chatbots**  
-* **Approach:** Deploy intelligent AI chatbots on {target_company}’s website to handle FAQs, provide product recommendations, and support customer inquiries in real time.  
-* **Benefit:** Enhance customer satisfaction with instant responses, reduce support team workload, and improve operational efficiency. AI-powered chatbots provide 24/7 availability, ensuring seamless interactions and fostering loyalty.  
+{solutions}  
 
 ---
 
@@ -504,6 +372,7 @@ We look forward to partnering with you!
 **{company_name}** 
 
 """
+
 GENERATE_SPIN_QUESTIONS_PROMPT = """
 Write personalized multiple SPIN selling questions for the provided lead, demonstrating a clear understanding of their company and specific challenges. Focus on how our solutions can help address these issues effectively. Keep the questions concise and highly relevant.  
 
@@ -535,44 +404,44 @@ You are a professional interview scriptwriter. Based on SPIN selling questions, 
 # **Specific Requirements:**  
 - Include personalized details and references to the lead’s business or challenges.  
 - Include multiple relevant questions in each section.
-- Highlight the unique solutions offered by **ElevateAI Marketing Solutions**.  
+- Highlight the unique solutions offered by **{company_name}**.  
 - Use a conversational and approachable tone, maintaining professionalism.  
 
 # **Context:**  
 
-**ElevateAI Marketing Solutions** empowers businesses to thrive in the digital age with AI-driven strategies that enhance online visibility and engagement. Our services include:  
-- **Content Creation and Optimization**: High-ranking blog posts and SEO strategies that attract organic traffic.  
-- **Social Media Automation**: AI-powered scheduling for targeted, platform-specific posts.  
-- **Tailored Messaging**: Authentic, brand-specific content that aligns with company values.  
+**{company_name}** {company_description}
 
-Our solutions free up your team to focus on core priorities, driving measurable results while maintaining consistency and authenticity in your digital presence.  
+Our services include:  
+{products_services}
+
+{value_proposition}  
 
 # **Example of interview Script:**  
 
 **Introduction:**  
-"Hi [Prospect's Name], this is Aymen from ElevateAI Marketing Solutions. How are you today?"  
+"Hi [Prospect's Name], this is [Your Name] from {company_name}. How are you today?"  
 
 **Personalized Hook:**  
-"I’ve been following [Company's Name]’s recent [initiative/project] to enhance your marketing outreach. It’s exciting to see the innovative strategies your team is implementing."  
+"I’ve been following [Company's Name]'s recent [initiative/project] in {industry}. It's exciting to see the innovative approaches your team is implementing."  
 
 **Situation Questions:**  
-"I’m curious—how does [Company’s Name] currently manage SEO optimization or social media content creation? Do you rely on in-house teams, external agencies, or a mix of both?"  
+"I'm curious about your growth strategy and key initiatives. How are you currently approaching {key_process}? What role do strategic partnerships play in your roadmap?"  
 
 **Problem Questions:**  
-"Are there challenges in maintaining consistency or driving engagement across your social media channels? Have you found it difficult to keep content aligned with your brand’s voice?"  
+"What are the main challenges you face in scaling your {industry} solutions? Have you encountered any specific barriers in market expansion or technology adoption?"  
 
 **Implication Questions:**  
-"If these challenges persist, how might they impact your ability to attract and convert leads online? Do you see potential missed opportunities in scaling your campaigns effectively?"  
+"How do these challenges impact your ability to capture market share and maintain competitive advantages? What opportunities for growth might be missed without the right strategic partners?"  
 
 **Need-Payoff Questions:**  
-"How could integrating AI-driven tools help streamline your content creation and social media strategies? What benefits do you think [Company's Name] could achieve by freeing up your team to focus on higher-value tasks?"  
+"How could a strategic partnership with {company_name} accelerate your growth objectives? What specific value could our {products_services} bring to your business model?"  
 
 **Closing:**  
-"I believe ElevateAI Marketing Solutions can offer the perfect tools and strategies to address these challenges. Would you be open to a quick meeting next week to explore how we can help [Company’s Name] elevate your digital presence?"  
+"I believe {company_name} can offer the perfect tools and strategies to address these challenges. Would you be open to a quick meeting next week to explore how we can help [Company's Name] achieve your goals?"  
 
 # **Notes:**  
 - Adapt the script based on prospect responses for a natural flow.  
-- Ensure the conversation stays focused on their challenges and how ElevateAI can provide tailored solutions.  
+- Ensure the conversation stays focused on their challenges and how {company_name} can provide tailored solutions.  
 - Emphasize measurable results and time-saving benefits. 
 """
 
