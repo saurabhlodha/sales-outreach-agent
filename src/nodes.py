@@ -156,21 +156,21 @@ class OutReachAutomationNodes:
 
         # Scrape Twitter profile
         twitter_profile = get_twitter_timeline(twitter_handle)
-        prompt = TWITTER_ANALYSIS_PROMPT.format(lead_name=lead_data.name)
+        prompt = VC_TWITTER_ANALYSIS_PROMPT.format(lead_name=lead_data.name)
         twitter_insight = invoke_llm(
             system_prompt=prompt, 
             user_message=twitter_profile,
             model=AI_MODEL
         )
-        twitter_analysis_report = Report(
-            title="Twitter Analysis Report",
+        vc_twitter_analysis_report = Report(
+            title="VC Twitter Analysis Report",
             content=twitter_insight,
             is_markdown=True
         )
 
         return {
             "current_lead": lead_data,
-            "reports": [twitter_analysis_report]
+            "reports": [vc_twitter_analysis_report]
         }
     
     def review_company_website(self, state: GraphState):
@@ -229,28 +229,6 @@ class OutReachAutomationNodes:
     @staticmethod
     def collect_company_information(state: GraphState):
         return {"reports": []}
-    
-    def analyze_blog_content(self, state: GraphState):
-        print(Fore.YELLOW + "----- Analyzing company main blog -----\n" + Style.RESET_ALL)  
-        blog_analysis_report = ""
-        
-        # Check if company has a blog
-        company_data = state["company_data"]
-        blog_url = company_data.social_media_links.blog
-        if blog_url:
-            blog_content = scrape_website_to_markdown(blog_url)
-            prompt = BLOG_ANALYSIS_PROMPT.format(company_name=company_data.name)
-            blog_analysis_report = invoke_llm(
-                system_prompt=prompt, 
-                user_message=blog_content,
-                model=AI_MODEL
-            )
-            blog_analysis_report = Report(
-                title="Blog Analysis Report",
-                content=blog_analysis_report,
-                is_markdown=True
-            )
-        return {"reports": [blog_analysis_report]}
     
     def analyze_social_media_content(self, state: GraphState):
         print(Fore.YELLOW + "----- Analyzing company social media accounts -----\n" + Style.RESET_ALL)
@@ -340,55 +318,43 @@ class OutReachAutomationNodes:
         )
         return {"reports": [news_analysis_report]}
     
-    def generate_digital_presence_report(self, state: GraphState):
-        print(Fore.YELLOW + "----- Generate Digital presence analysis report -----\n" + Style.RESET_ALL)
+    def generate_company_profile_report(self, state: GraphState):
+        print(Fore.YELLOW + "----- Generate company profile report -----\n" + Style.RESET_ALL)
         
         # Load reports
         reports = state["reports"]
-        blog_analysis_report = get_report(reports, "Blog Analysis Report")
         facebook_analysis_report = get_report(reports, "Facebook Analysis Report")
         twitter_analysis_report = get_report(reports, "Twitter Analysis Report")
         youtube_analysis_report = get_report(reports, "Youtube Analysis Report")
         news_analysis_report = get_report(reports, "News Analysis Report")
-        
+        vc_twitter_analysis_report = get_report(reports, "VC Twitter Analysis Report")
+
         inputs = f"""
-        # **Digital Presence Data:**
-        ## **Blog Information:**
-
-        {blog_analysis_report}
-        
-        ## **Facebook Information:**
-
-        {facebook_analysis_report}
-        
-        ## **Twitter Information:**
-
-        {twitter_analysis_report}
-
-        ## **Youtube Information:**
-
-        {youtube_analysis_report}
-
+        # **Company Data:**
         # **Recent News:**
 
         {news_analysis_report}
+
+        # **VC Twitter Analysis:**
+
+        {vc_twitter_analysis_report}
         """
         
-        prompt = DIGITAL_PRESENCE_REPORT_PROMPT.format(
+        prompt = COMPANY_PROFILE_REPORT_PROMPT.format(
             company_name=state["company_data"].name, date=get_current_date()
         )
-        digital_presence_report = invoke_llm(
+        company_profile_report = invoke_llm(
             system_prompt=prompt, 
             user_message=inputs,
             model=AI_MODEL
         ) 
         
-        digital_presence_report = Report(
-            title="Digital Presence Report",
-            content=digital_presence_report,
+        company_profile_report = Report(
+            title="Company Profile Report",
+            content=company_profile_report,
             is_markdown=True
         )
-        return {"reports": [digital_presence_report]}
+        return {"reports": [company_profile_report]}
     
     def generate_full_lead_research_report(self, state: GraphState):
         print(Fore.YELLOW + "----- Generate global lead analysis report -----\n" + Style.RESET_ALL)
@@ -396,7 +362,7 @@ class OutReachAutomationNodes:
         # Load reports
         reports = state["reports"]
         general_lead_search_report = get_report(reports, "General Lead Research Report")
-        digital_presence_report = get_report(reports, "Digital Presence Report")
+        company_profile_report = get_report(reports, "Company Profile Report")
         
         inputs = f"""
         # **Lead & company Information:**
@@ -405,9 +371,9 @@ class OutReachAutomationNodes:
         
         ---
 
-        # **Digital Presence Information:**
+        # **Company Profile:**
 
-        {digital_presence_report}
+        {company_profile_report}
         """
         
         prompt = GLOBAL_LEAD_RESEARCH_REPORT_PROMPT.format(
@@ -521,8 +487,7 @@ class OutReachAutomationNodes:
 
         **Correct Links:**
 
-        ** Our website link**: https://elevateAI.com
-        ** Case study link**: https://elevateAI.com/case-studies/A
+        ** Our website link**: {state["company_data"].website}
         """
         
         # Call our editor/proof-reader agent

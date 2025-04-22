@@ -30,11 +30,10 @@ class OutReachAutomation:
         graph.add_node("analyze_lead_social_profile", nodes.analyze_lead_social_profile)
         graph.add_node("review_company_website", nodes.review_company_website)
         graph.add_node("collect_company_information", nodes.collect_company_information)
-        graph.add_node("analyze_blog_content", nodes.analyze_blog_content)
         graph.add_node("analyze_social_media_content", nodes.analyze_social_media_content)
         graph.add_node("analyze_recent_news", nodes.analyze_recent_news)
         graph.add_node("generate_full_lead_research_report", nodes.generate_full_lead_research_report)
-        graph.add_node("generate_digital_presence_report", nodes.generate_digital_presence_report)
+        graph.add_node("generate_company_profile_report", nodes.generate_company_profile_report)
         graph.add_node("score_lead", nodes.score_lead)
 
         # Outreach preparation phase
@@ -73,15 +72,13 @@ class OutReachAutomation:
         graph.add_edge("review_company_website", "collect_company_information")
 
         # Collect company information and branch into various analyses
-        graph.add_edge("collect_company_information", "analyze_blog_content")
         graph.add_edge("collect_company_information", "analyze_social_media_content")
         graph.add_edge("collect_company_information", "analyze_recent_news")
 
         # Analysis results converge into generating reports
-        graph.add_edge("analyze_blog_content", "generate_digital_presence_report")
-        graph.add_edge("analyze_social_media_content", "generate_digital_presence_report")
-        graph.add_edge("analyze_recent_news", "generate_digital_presence_report")
-        graph.add_edge("generate_digital_presence_report", "generate_full_lead_research_report")
+        graph.add_edge("analyze_social_media_content", "generate_company_profile_report")
+        graph.add_edge("analyze_recent_news", "generate_company_profile_report")
+        graph.add_edge("generate_company_profile_report", "generate_full_lead_research_report")
         graph.add_edge("generate_full_lead_research_report", "generate_custom_outreach_report")
 
         # Outreach material creation
