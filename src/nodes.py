@@ -1,4 +1,5 @@
 import os
+import json
 from colorama import Fore, Style
 from .tools.base.markdown_scraper_tool import scrape_website_to_markdown
 from .tools.base.search_tools import get_recent_news
@@ -259,7 +260,7 @@ class OutReachAutomationNodes:
         youtube_url = company_data.social_media_links.youtube
         
         # Check If company has Youtube channel
-        if youtube_url:
+        if False and youtube_url:
             youtube_data = get_youtube_stats(youtube_url)
             prompt = YOUTUBE_ANALYSIS_PROMPT.format(company_name=company_data.name)
             youtube_insight = invoke_llm(
@@ -341,7 +342,9 @@ class OutReachAutomationNodes:
         """
         
         prompt = COMPANY_PROFILE_REPORT_PROMPT.format(
-            company_name=state["company_data"].name, date=get_current_date()
+            company_name=state["company_data"].name,
+            industry=state["company_data"].industry,
+            date=get_current_date()
         )
         company_profile_report = invoke_llm(
             system_prompt=prompt, 
@@ -526,13 +529,19 @@ class OutReachAutomationNodes:
         reports = state["reports"]
         general_lead_search_report = get_report(reports, "General Lead Research Report")
         
+        company_data = state["company_data"]
         lead_data = f"""
-        # **Lead & company Information:**
+        # **Company & Lead Information:**
 
         {general_lead_search_report}
 
-        # Outreach report Link:
+        # Company Details:
+        Company Name: {company_data.name}
+        Industry: {company_data.industry}
+        Website: {company_data.website}
+        Value Proposition: {company_data.description}
 
+        # Report Link:
         {state["custom_outreach_report_link"]}
         """
         output = invoke_llm(
@@ -576,20 +585,46 @@ class OutReachAutomationNodes:
     def generate_interview_script(self, state: GraphState):
         print(Fore.YELLOW + "----- Generating interview script -----\n" + Style.RESET_ALL)
         
-        # Load reports
+        # Load reports and company data
         reports = state["reports"]
+        company_data = state["company_data"]
         global_research_report = get_report(reports, "Global Lead Analysis Report")
+        
+        # Prepare company context for SPIN questions
+        company_context = f"""
+        company_name: {company_data.name}
+        value_proposition: {company_data.description}
+        tech_innovation_details: {company_data.tech_stack if hasattr(company_data, 'tech_stack') else 'Not available'}
+        market_position_details: {company_data.market_position if hasattr(company_data, 'market_position') else 'Not available'}
+        growth_strategy_details: {company_data.growth_strategy if hasattr(company_data, 'growth_strategy') else 'Not available'}
+        """
         
         # Generating SPIN questions
         spin_questions = invoke_llm(
             system_prompt=GENERATE_SPIN_QUESTIONS_PROMPT,
-            user_message=global_research_report,
+            user_message=company_context + "\n\n" + global_research_report,
             model=AI_MODEL
         )
         
+        # Prepare context for interview script
+        company_details = {
+            "company_name": company_data.name,
+            "value_proposition": company_data.description,
+            "innovation_details": company_data.tech_stack if hasattr(company_data, 'tech_stack') else 'Not available',
+            "market_leadership_details": company_data.market_position if hasattr(company_data, 'market_position') else 'Not available',
+            "growth_strategy_details": company_data.growth_strategy if hasattr(company_data, 'growth_strategy') else 'Not available',
+            "specific_area": company_data.industry,
+            "recent_initiative": company_data.recent_news[0] if hasattr(company_data, 'recent_news') and company_data.recent_news else 'Not available',
+            "specific_aspect": company_data.focus_areas[0] if hasattr(company_data, 'focus_areas') and company_data.focus_areas else company_data.industry,
+            "contact_name": state["current_lead"].name,
+            "sender_name": "Your Name"
+        }
+        
         inputs = f"""
-        # **Lead & company Information:**
-
+        # **Company Information:**
+        {json.dumps(company_details, indent=2)}
+        
+        # **Research Report:**
         {global_research_report}
 
         # **SPIN questions:**
@@ -643,7 +678,6 @@ class OutReachAutomationNodes:
         # save new record data, ensure correct fields are used
         new_data = {
             "Status": "ATTEMPTED_TO_CONTACT", # Set lead to attempted contact
-            "Score": state["lead_score"], 
             "Analysis Reports": state["reports_folder_link"],
             "Outreach Report": state.get("custom_outreach_report_link"),
             "Last Contacted": get_current_date()
