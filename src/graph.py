@@ -82,17 +82,7 @@ class OutReachAutomation:
         graph.add_edge("analyze_social_media_content", "generate_digital_presence_report")
         graph.add_edge("analyze_recent_news", "generate_digital_presence_report")
         graph.add_edge("generate_digital_presence_report", "generate_full_lead_research_report")
-
-        # Scoring phase with conditional qualification check
-        graph.add_edge("generate_full_lead_research_report", "score_lead")
-        graph.add_conditional_edges(
-            "score_lead",
-            nodes.check_if_qualified,
-            {
-                "qualified": "generate_custom_outreach_report",  # Proceed if lead is qualified
-                "not qualified": "save_reports_to_google_docs"  # Save reports and exit if lead is unqualified 
-            }
-        )
+        graph.add_edge("generate_full_lead_research_report", "generate_custom_outreach_report")
 
         # Outreach material creation
         graph.add_edge("generate_custom_outreach_report", "create_outreach_materials")
