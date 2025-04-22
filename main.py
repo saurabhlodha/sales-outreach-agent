@@ -9,6 +9,9 @@ from src.tools.draw_graph import draw_workflow_image
 # Load environment variables from a .env file
 load_dotenv()
 
+# Model to use
+AI_MODEL = os.environ['AI_MODEL']
+
 if __name__ == "__main__":
     # Use Airtable for accessing your leads list
     # lead_loader = AirtableLeadLoader(

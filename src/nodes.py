@@ -26,6 +26,9 @@ SAVE_TO_GOOGLE_DOCS = False
 # Adding test email address to temporarily skips emailing VCs
 TEST_EMAIL = os.environ['TEST_EMAIL']
 
+# Model to use
+AI_MODEL = os.environ['AI_MODEL']
+
 class OutReachAutomationNodes:
     def __init__(self, loader):
         self.lead_loader = loader
@@ -157,7 +160,7 @@ class OutReachAutomationNodes:
         twitter_insight = invoke_llm(
             system_prompt=prompt, 
             user_message=twitter_profile,
-            model="gemini-1.5-flash"
+            model=AI_MODEL
         )
         twitter_analysis_report = Report(
             title="Twitter Analysis Report",
@@ -182,7 +185,7 @@ class OutReachAutomationNodes:
             website_info = invoke_llm(
                 system_prompt=WEBSITE_ANALYSIS_PROMPT.format(main_url=company_website), 
                 user_message=content,
-                model="gemini-1.5-flash",
+                model=AI_MODEL,
                 response_format=WebsiteData
             )
 
@@ -209,7 +212,7 @@ class OutReachAutomationNodes:
         general_lead_search_report = invoke_llm(
             system_prompt=LEAD_SEARCH_REPORT_PROMPT, 
             user_message=inputs,
-            model="gemini-1.5-flash"
+            model=AI_MODEL
         )
         
         lead_search_report = Report(
@@ -240,7 +243,7 @@ class OutReachAutomationNodes:
             blog_analysis_report = invoke_llm(
                 system_prompt=prompt, 
                 user_message=blog_content,
-                model="gemini-1.5-flash"
+                model=AI_MODEL
             )
             blog_analysis_report = Report(
                 title="Blog Analysis Report",
@@ -284,7 +287,7 @@ class OutReachAutomationNodes:
             youtube_insight = invoke_llm(
                 system_prompt=prompt, 
                 user_message=youtube_data,
-                model="gemini-1.5-flash"
+                model=AI_MODEL
             )
             youtube_analysis_report = Report(
                 title="Youtube Analysis Report",
@@ -327,7 +330,7 @@ class OutReachAutomationNodes:
         news_insight = invoke_llm(
             system_prompt=news_analysis_prompt, 
             user_message=recent_news,
-            model="gemini-1.5-flash"
+            model=AI_MODEL
         )
         
         news_analysis_report = Report(
@@ -377,7 +380,7 @@ class OutReachAutomationNodes:
         digital_presence_report = invoke_llm(
             system_prompt=prompt, 
             user_message=inputs,
-            model="gemini-1.5-flash"
+            model=AI_MODEL
         ) 
         
         digital_presence_report = Report(
@@ -413,7 +416,7 @@ class OutReachAutomationNodes:
         full_report = invoke_llm(
             system_prompt=prompt, 
             user_message=inputs,
-            model="gemini-1.5-flash"
+            model=AI_MODEL
         )
         
         global_research_report = Report(
@@ -441,7 +444,7 @@ class OutReachAutomationNodes:
         lead_score = invoke_llm(
             system_prompt=SCORE_LEAD_PROMPT,
             user_message=global_research_report,
-            model="gemini-1.5-pro"
+            model=AI_MODEL
         )
         return {"lead_score": lead_score.strip()}
 
@@ -506,7 +509,7 @@ class OutReachAutomationNodes:
         custom_outreach_report = invoke_llm(
             system_prompt=GENERATE_OUTREACH_REPORT_PROMPT,
             user_message=inputs,
-            model="gemini-1.5-pro"
+            model=AI_MODEL
         )
         
         # TODO Find better way to include correct links into the final report
@@ -526,7 +529,7 @@ class OutReachAutomationNodes:
         revised_outreach_report = invoke_llm(
             system_prompt=PROOF_READER_PROMPT,
             user_message=inputs,
-            model="gemini-1.5-flash"
+            model=AI_MODEL
         )
         
         # Store report into google docs and get shareable link
@@ -570,7 +573,7 @@ class OutReachAutomationNodes:
         output = invoke_llm(
             system_prompt=PERSONALIZE_EMAIL_PROMPT,
             user_message=lead_data,
-            model="gemini-1.5-flash",
+            model=AI_MODEL,
             response_format=EmailResponse
         )
         
@@ -616,7 +619,7 @@ class OutReachAutomationNodes:
         spin_questions = invoke_llm(
             system_prompt=GENERATE_SPIN_QUESTIONS_PROMPT,
             user_message=global_research_report,
-            model="gemini-1.5-flash"
+            model=AI_MODEL
         )
         
         inputs = f"""
@@ -633,7 +636,7 @@ class OutReachAutomationNodes:
         interview_script = invoke_llm(
             system_prompt=WRITE_INTERVIEW_SCRIPT_PROMPT,
             user_message=inputs,
-            model="gemini-1.5-flash"
+            model=AI_MODEL
         )
         
         interview_script_doc = Report(

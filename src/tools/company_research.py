@@ -1,5 +1,9 @@
+import os
 from src.utils import invoke_llm
 from .base.linkedin_tools import scrape_linkedin
+
+# Model to use
+AI_MODEL = os.environ['AI_MODEL']
 
 CREATE_COMPANY_PROFILE = """
 ### Role  
@@ -63,6 +67,6 @@ def generate_company_profile(company_linkedin_info, scraped_website):
     profile_summary = invoke_llm(
         system_prompt=CREATE_COMPANY_PROFILE, 
         user_message=inputs,
-        model="gemini-1.5-flash"
+        model=AI_MODEL
     )
     return profile_summary

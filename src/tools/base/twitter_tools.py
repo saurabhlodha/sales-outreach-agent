@@ -4,6 +4,9 @@ from src.utils import invoke_llm
 from .search_tools import google_search
 from colorama import Fore, Style
 
+# Model to use
+AI_MODEL = os.environ['AI_MODEL']
+
 def extract_twitter_handle(lead_data_name, company_name):
     EXTRACT_TWITTER_URL_PROMPT = """
     **Role:**  
@@ -28,7 +31,7 @@ def extract_twitter_handle(lead_data_name, company_name):
     result = invoke_llm(
         system_prompt=EXTRACT_TWITTER_URL_PROMPT, 
         user_message=str(search_results),
-        model="gemini-1.5-flash"
+        model=AI_MODEL
     )
     print(Fore.BLUE + f"Lead Twitter Handle Extracted: {result}" + Style.RESET_ALL)
     return result

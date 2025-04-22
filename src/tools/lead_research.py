@@ -1,7 +1,11 @@
+import os
 from src.utils import invoke_llm
 from .base.search_tools import google_search
 from .base.linkedin_tools import extract_linkedin_url, scrape_linkedin
 from colorama import Fore, Style
+
+# Model to use
+AI_MODEL = os.environ['AI_MODEL']
 
 SUMMARIZE_LINKEDIN_PROFILE = """
 # Role  
@@ -134,7 +138,7 @@ def research_lead_on_linkedin(lead_name, lead_email):
     profile_summary = invoke_llm(
         system_prompt=SUMMARIZE_LINKEDIN_PROFILE, 
         user_message=inputs,
-        model="gemini-1.5-flash"
+        model=AI_MODEL
     )
     
     return (

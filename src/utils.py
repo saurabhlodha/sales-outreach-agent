@@ -7,6 +7,9 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from .config import setup_google_ai
 
+# Model to use
+AI_MODEL = os.environ['AI_MODEL']
+
 # Configure Google AI
 setup_google_ai()
 
@@ -83,8 +86,8 @@ def get_llm_by_provider(llm_provider, model):
 def invoke_llm(
     system_prompt,
     user_message,
-    model="gemini-1.5-flash",  # Specify the model name according to the provider
-    llm_provider="google",  # By default use Google as provider
+    model=AI_MODEL,  # Specify the model name according to the provider
+    llm_provider="openai",  # By default use OpenAI as provider
     response_format=None
 ):
     messages = [

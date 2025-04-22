@@ -2,6 +2,9 @@ import os
 import requests
 from src.utils import invoke_llm
 
+# Model to use
+AI_MODEL = os.environ['AI_MODEL']
+
 def extract_linkedin_url_base(search_results):
     """
     Extracts the LinkedIn URL from the search results.
@@ -29,7 +32,7 @@ def extract_linkedin_url(search_results):
     result = invoke_llm(
         system_prompt=EXTRACT_LINKEDIN_URL_PROMPT, 
         user_message=str(search_results),
-        model="gemini-1.5-flash"
+        model=AI_MODEL
     )
     return result
     
