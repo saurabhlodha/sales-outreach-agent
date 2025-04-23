@@ -1,81 +1,67 @@
 WEBSITE_ANALYSIS_PROMPT = """
-The provided webpage content is scraped from: {main_url}.
+Analyze the provided webpage content from {main_url} and extract key information.
 
 # Tasks
 
-## 1- Summarize webpage content:
-Write a 500 words comprehensive summary in markdown format analyzing:
+## 1. Company Overview
+Provide a concise summary (max 300 words) of:
+* Core business and value proposition
+* Target market and customer segments
+* Key products/services
+* Technology and innovation focus
 
-1. Business Model & Value Creation:
-* Core business model and revenue streams
-* Market opportunity and growth potential
-* Competitive advantages and unique selling propositions
+## 2. Important Links
+Extract and validate links for:
+* Social media profiles (Twitter, LinkedIn, Facebook, YouTube)
+* Blog or news section
+* Product documentation
+* Contact information
 
-2. Technology & Innovation:
-* Key technological capabilities and IP
-* Innovation roadmap and R&D focus
-* Technical scalability and infrastructure
-
-3. Market Position:
-* Target market segments and size
-* Current market share and positioning
-* Growth strategy and expansion plans
-
-4. Team & Leadership:
-* Key executive backgrounds
-* Domain expertise and track record
-* Advisory board and partnerships
-
-5. Financial Overview:
-* Revenue model and pricing strategy
-* Current financial metrics (if available)
-* Funding history and capital allocation
-
-## 2- Extract Important Links:
-* Company social profiles and professional networks
-* News and press coverage
-* Product documentation or technical resources
-
-# IMPORTANT:
-* Focus on business metrics and growth indicators
-* Highlight potential synergies and partnership opportunities
-* Identify key risks and mitigation strategies
+# Output Format
+Return a JSON object with the following structure (replace empty/missing values with null):
+{{
+    "summary": "string",
+    "twitter": "string (URL)",
+    "linkedin": "string (URL)",
+    "facebook": "string (URL)",
+    "youtube": "string (URL)",
+    "blog_url": "string (URL)"
+}}
 """
 
-LEAD_SEARCH_REPORT_PROMPT = f"""
-# **Role:**
+LEAD_SEARCH_REPORT_PROMPT = """
+# Role
+Analyze the provided LinkedIn profiles and generate a concise report highlighting key information about the lead and their company.
 
-You are a Professional Business Analyst tasked with crafting a comprehensive report based on the LinkedIn profiles of both an individual and their company and the content of their website. 
-Your goal is to provide an in-depth overview of the lead's professional background, the company's mission and activities, and identify key business insights that might inform potential opportunities or partnerships.
+# Input Data
+You have access to:
+1. Lead's LinkedIn profile
+2. Company's LinkedIn profile
 
----
+# Output Format
+Generate a markdown report with these sections:
 
-# **Task:**
+## Lead Profile
+* Current role and responsibilities
+* Key expertise and skills
+* Relevant experience
 
-Craft a detailed business profile report that includes insights about the individual lead and their associated company based on the provided LinkedIn and website information.
-This report should include the following:
+## Company Overview
+* Core business focus
+* Products/services
+* Market position
+* Company size and stage
 
-## **Company Overview:**
-* **Name & Description:** Provide a brief description of the company, its mission, and its core business activities.
-* **Website & Location:** Include the company's website URL and its headquarters' location(s).
-* **Industry & Size:** Report the company’s industry and employee size.
-* **Mission:** Summarize the company’s mission and primary offerings.  
-* **Product and services:** Highlight areas where the company excels and its offered product and services.  
+## Potential Alignment
+* Areas of mutual interest
+* Possible collaboration opportunities
+* Relevant industry experience
 
-## **Lead Profile Summary:**
-* **Professional Experience:** Summarize the lead’s current and past roles, including key responsibilities and achievements. Focus on their career trajectory, skill set, and contributions at each company.
-* **Education:** List the lead's relevant educational background, including fields of study and the duration of their studies.
-* **Skills & Expertise:** Identify the lead’s main areas of expertise, including any specific skills they bring to their role.
-* **Key Insights:** Offer insights into the lead’s leadership qualities, relevant achievements, or experience that can be beneficial for future collaboration or partnerships.
-
----
-
-# Notes:
-
-* Focus on crafting a report that gives clear, actionable insights based on the data provided. 
-* Use bullet points to organize the report where appropriate, ensuring clarity and conciseness. Avoid lengthy paragraphs by breaking down information into easily digestible sections.
-* Final report should be well-organized in markdown format, with distinct sections for the company overview and lead profile. 
-* Return only final report without any additional text or preamble.
+# Notes
+* Keep sections concise and focused
+* Use bullet points for clarity
+* Focus on information relevant for business development
+* Avoid speculation - stick to available facts
 """
 
 VC_TWITTER_ANALYSIS_PROMPT = """
@@ -219,103 +205,42 @@ Provide a consolidated set of actionable steps to improve the company's digital 
 """
 
 GENERATE_OUTREACH_REPORT_PROMPT = """
-# **Role:**  
-You are a Professional Business Analyst specializing in {industry} market analysis and strategic partnerships. Your task is to write a comprehensive, personalized report demonstrating how our solutions align with the company's business objectives and can drive measurable value through potential collaboration or investment.  
+# Role
+Create a concise outreach report that demonstrates potential value alignment between our company and the target company.
 
----
+# Available Data
+1. Our company information:
+   - Name: {company_name}
+   - Description: {company_description}
+   - Value proposition: {value_proposition}
+   - Products/services: {products_services}
+   - Benefits: {benefits}
+   - Target market: {target_market}
 
-# **Task:**  
-Using the provided company profile report, generate a detailed outreach report that highlights:  
-1. The lead's company challenges and opportunities.  
-2. How our AI-driven solutions can help them solve their challenges.  
-3. Showcase the tangible results that we achieved with similar businesses through our solutions.  
+2. Lead research report
+3. Case study (if available)
 
----
+# Output Format
+Generate a markdown report with these sections:
 
-# **Context:**  
-You have access to:  
-1. A **detailed research report** about the lead’s company, including their services, challenges, and digital presence.  
-2. A **relevant case study** showcasing the success of our AI-driven solutions in similar contexts.  
+## Executive Summary
+* Brief overview of both companies
+* Key areas of potential collaboration
 
-## **About us:** 
+## Value Alignment
+* How our solutions address their needs
+* Specific benefits for their business
+* Relevant industry experience
 
-{company_description}
+## Next Steps
+* Clear call to action
+* Suggested meeting agenda
 
-{value_proposition}
-
-Trusted by innovative businesses, our company {company_name} combines {products_services} to deliver impactful, measurable results. {benefits} 
-
----
-
-# **Instructions:**  
-Your report should include the following five sections:  
-   
-**1. Introduction:** 
-- Information about who we are and what are our services and offerings.
-
-**2. Business Analysis:**  
-- **Company Overview:** Summarize the lead’s business, industry, and key offerings.  
-- **Challenges Identified:** Highlight their key challenges based on the research report.  
-- **Potential for Improvement:** Identify areas where AI-driven solutions can drive measurable results.  
-
-**3. Relevant AI Solutions:**  
-- Propose three tailored AI-powered solutions addressing specific challenges or goals. Examples include:  
-  - AI-driven social media automation across different platforms.  
-  - AI blog content automation & SEO optimization. 
-  - AI chatbots for website customer engagement.  
----
-
-## **Introduction**  
-At our company **{company_name}**, {company_description}
-
-{value_proposition}
-
-With our key benefits:
-{benefits}
-
-We're excited about the opportunity to partner with your VC firm **{target_company}** to achieve measurable growth in your industry.
-
----
-
-## **Business Analysis**  
-
-### **Company Overview:**  
-{target_company} is a {target_company_description} company specializing in {target_company_services}. With a mission to {target_company_mission}, {target_company} has positioned itself as a pioneer in the {target_company_industry} industry.  
-
-### **Challenges Identified:**  
-{challenges}  
-
-### **Potential for Improvement:**  
-{improvement_opportunities}  
-
----
-
-### **Proposed Solutions**  
-
-{solutions}  
-
----
-
-### **Expected Results**  
-
-{expected_results}
-
----
-
-### **Next Steps**  
-
-We'd love to discuss how these tailored solutions can help {target_company} achieve its goals. Let's schedule a 30-minute call to explore opportunities and create a roadmap for success.  
-
-**Next Steps:**  
-- Reply to this email with your availability.  
-- We'll schedule a brief discovery call.  
-
-We look forward to partnering with you!
-
---- 
-
-**{company_name}** 
-
+# Notes
+* Keep the report under 500 words
+* Focus on concrete value proposition
+* Use bullet points for clarity
+* Include specific examples where possible
 """
 
 GENERATE_SPIN_QUESTIONS_PROMPT = """
@@ -454,125 +379,119 @@ Your primary responsibilities are:
 """
 
 PERSONALIZE_EMAIL_PROMPT = """
-# **Role:**  
+# **Role:**
 
-You are an expert in business development and strategic partnerships. Your task is to analyze the provided company and investment professional's details to craft a personalized outreach email focused on potential collaboration opportunities.
-
----
+You are an expert in business development and outreach. Your task is to craft a personalized email using the available information about the lead and your company.
 
 # **Context**
 
-You are writing a strategic outreach email to initiate a meaningful business conversation. The goal is to demonstrate how our expertise and capabilities align with their investment thesis and portfolio strategy.
+You have access to:
+1. Lead data: name, email, profile information
+2. Your company data: description, products/services, target market, value proposition, and key benefits
 
----
-
-# **Guidelines:**  
-- Review the company profile and recent developments for relevant insights
-- Focus on strategic alignment and mutual value creation opportunities
-- Write a short [Personalization] section highlighting shared interests or complementary strengths
+# **Guidelines:**
+- Keep the email concise and focused
+- Use specific details from the lead's profile for personalization
+- Highlight relevant aspects of your company that align with the lead's interests
 - Maintain a professional yet engaging tone
 
-## **Example of personalizations:**
-
-- Your recent thesis on {industry} innovation resonated strongly with our approach. Your insights about {specific_point} particularly align with our vision for the sector.
-
-- Your portfolio company {company_name}'s recent developments in {area} demonstrate the kind of innovation we're passionate about. We see similar opportunities in {related_area}.
-
-- Your recent analysis of {market_trend} caught my attention. Our work in this space has revealed similar patterns, particularly regarding {specific_aspect}.
-
-- Your investment in {portfolio_company} and focus on {technology/approach} shows we share a vision for the future of {industry}.
-
----
-
-# **Email Template:**  
+# **Email Template:**
 
 Hi {first_name},
 
-[Personalization]
+[Brief personalization based on lead's profile]
 
-At our company {company_name}, we're focused on {value_proposition}. Our approach has helped companies in {industry} achieve {key_benefit}, and we see significant opportunities for collaboration with your VC firm in your focus areas.
+At {company_name}, we {company_description}. Our {value_proposition} has been particularly effective for {target_market}, delivering {key_benefits}.
 
-I've prepared a detailed analysis of potential synergies and opportunities based on our research of your investment approach and portfolio companies.
-
-You can review it here: {report_link}
-
-Would you be open to a brief discussion about how we might work together to create value in this space?
+I'd love to schedule a brief call to discuss how we might work together.
 
 Best regards,
 {sender_name}
 
----
-
-# **Notes:**  
-
-* Return only the final personalized email without any additional text or preamble.  
-* Ensure the report link and all personalization details are accurate.  
-* **DON’T:** use generic statements or make assumptions without evidence.  
-* **DON’T:** just praise the lead—focus on their experiences and background and on their company information.
+# **Notes:**
+* Keep the email under 150 words
+* Use only factual information from the provided data
+* Focus on value alignment rather than generic praise
+* Ensure all placeholders are replaced with actual data
 """
 
 GENERATE_SPIN_QUESTIONS_PROMPT = """
-Write strategic SPIN questions for the target company, demonstrating understanding of their business model, market position, and growth opportunities. Focus on identifying potential areas for collaboration and value creation. Keep questions focused on strategic alignment and mutual benefit.
+# Role
+Create strategic SPIN (Situation, Problem, Implication, Need-payoff) questions for a business development conversation.
 
-## **Company Overview**
+# Available Data
+## Our Company
+- Name: {company_name}
+- Value Proposition: {value_proposition}
+- Target Market: {target_market}
+- Key Benefits: {benefits}
 
-Our company {company_name} specializes in {value_proposition}. Our key strengths include:
-- **Technology Innovation**: {tech_innovation_details}
-- **Market Position**: {market_position_details}
-- **Growth Strategy**: {growth_strategy_details}
+## Target Company
+- Lead's profile and experience
+- Company's business focus
+- Market position
 
-Our approach combines deep industry expertise with innovative solutions to create sustainable competitive advantages and drive business growth.
+# Output Format
+Generate 3-4 questions for each SPIN category:
 
-## **Notes:**  
-- Return only the SPIN questions, maximum of 15. 
-- Avoid generic or vague inquiries; base them on the provided lead details and agency capabilities.  
-- Focus on uncovering pain points, implications, and opportunities where ElevateAI's solutions can add value. 
+## Situation Questions
+[Questions about current state]
+
+## Problem Questions
+[Questions about challenges]
+
+## Implication Questions
+[Questions about impact]
+
+## Need-Payoff Questions
+[Questions about solution value]
+
+# Notes
+* Keep questions concise and specific
+* Focus on mutual value creation
+* Use available data points
+* Avoid hypotheticals
 """
 
 WRITE_INTERVIEW_SCRIPT_PROMPT = """
-# **Role & Task:**  
-You are a strategic business development professional. Based on company research and market analysis, create an engaging discussion framework focused on exploring potential business synergies and collaboration opportunities.
+# Role
+Create a natural conversation script for a business development call using available company and lead information.
 
-# **Specific Requirements:**  
-- Reference specific company initiatives and market positions
-- Include strategic questions that explore mutual value creation
-- Highlight potential areas for collaboration and partnership
-- Maintain a professional and strategic focus throughout the conversation
+# Available Data
+## Our Company
+- Name: {company_name}
+- Description: {company_description}
+- Value Proposition: {value_proposition}
+- Benefits: {benefits}
 
-# **Context:**  
+## Lead Information
+- Name: {contact_name}
+- Company: {target_company}
+- Profile summary
 
-{company_name} specializes in {value_proposition} with a focus on:
-- **Innovation**: {innovation_details}
-- **Market Leadership**: {market_leadership_details}
-- **Growth Strategy**: {growth_strategy_details}
+# Output Format
+Create a conversation script with these sections:
 
-Our goal is to identify and create meaningful partnerships that drive mutual growth and value creation.
+## Introduction (30 seconds)
+* Greeting
+* Quick company overview
+* Meeting purpose
 
-# **Discussion Framework:**  
+## Discovery (2-3 minutes)
+* 2-3 key SPIN questions
+* Follow-up points
 
-**Introduction:**  
-"Hi {contact_name}, this is {sender_name} from {company_name}. Thank you for taking the time to connect."
+## Value Proposition (2 minutes)
+* Alignment points
+* Specific benefits
 
-**Strategic Context:**  
-"I've been following {company_name}'s developments in {specific_area}, particularly your focus on {recent_initiative}. Your approach to {specific_aspect} aligns well with our perspective on the market."
+## Next Steps (30 seconds)
+* Clear action items
+* Timeline
 
-**Market Understanding:**  
-"How do you see the {industry} landscape evolving, particularly regarding {specific_trend}? What role do strategic partnerships play in your growth strategy?"
-
-**Opportunity Exploration:**  
-"What are the key challenges you're seeing in {specific_area}? How are you currently approaching these opportunities?"
-
-**Value Creation:**  
-"How do you evaluate potential strategic partnerships? What specific outcomes would create the most value for your organization?"
-
-**Collaboration Potential:**  
-"Based on your priorities, I see several areas where our capabilities could complement your strategy. Would you be interested in exploring how we might work together to {specific_value_proposition}?"
-
-**Next Steps:**  
-"I'd like to share a more detailed analysis of potential collaboration opportunities. Would you be open to a focused discussion with our team to explore these areas further?"
-
-# **Notes:**  
-- Adapt the discussion based on the company's strategic priorities
-- Keep the focus on mutual value creation and strategic alignment
-- Emphasize concrete opportunities for collaboration and growth
+# Notes
+* Keep it conversational
+* Use natural transitions
+* Include pauses for responses
+* Stick to available facts
 """

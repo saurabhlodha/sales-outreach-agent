@@ -190,11 +190,17 @@ class OutReachAutomationNodes:
                 response_format=WebsiteData
             )
 
-            # Extract all relevant links
-            vc_company_data.social_media_links.blog = website_info.blog_url
-            vc_company_data.social_media_links.facebook = website_info.facebook
-            vc_company_data.social_media_links.twitter = website_info.twitter
-            vc_company_data.social_media_links.youtube = website_info.youtube
+            # Extract all relevant links if they exist
+            if website_info.blog_url:
+                vc_company_data.social_media_links.blog = website_info.blog_url
+            if website_info.facebook:
+                vc_company_data.social_media_links.facebook = website_info.facebook
+            if website_info.twitter:
+                vc_company_data.social_media_links.twitter = website_info.twitter
+            if website_info.youtube:
+                vc_company_data.social_media_links.youtube = website_info.youtube
+            if website_info.linkedin:
+                vc_company_data.social_media_links.linkedin = website_info.linkedin
 
             # Update company profile with website data
             vc_company_data.profile = generate_company_profile(vc_company_data.profile, website_info.summary)
@@ -223,7 +229,7 @@ class OutReachAutomationNodes:
         )
         
         return {
-            "company_data": company_data,
+            "vc_company_data": vc_company_data,
             "reports": [lead_search_report]
         }
     
@@ -282,7 +288,7 @@ class OutReachAutomationNodes:
             pass
         
         return {
-            "company_data": company_data,
+            "vc_company_data": vc_company_data,
             "reports": [youtube_analysis_report]
         }
 
@@ -450,8 +456,23 @@ class OutReachAutomationNodes:
         # Report Link:
         {state["custom_outreach_report_link"]}
         """
+        our_company = state["our_company_data"]
+        target_company = state["vc_company_data"]
+        lead = state["current_lead"]
+
+        email_context = {
+            "first_name": lead.name.split()[0],
+            "company_name": our_company.name,
+            "company_description": our_company.description,
+            "value_proposition": our_company.value_proposition,
+            "target_market": our_company.target_market,
+            "key_benefits": our_company.benefits,
+            "sender_name": our_company.name
+        }
+
+        personalize_email_prompt = PERSONALIZE_EMAIL_PROMPT.format(**email_context)
         output = invoke_llm(
-            system_prompt=PERSONALIZE_EMAIL_PROMPT,
+            system_prompt=personalize_email_prompt,
             user_message=lead_data,
             model=AI_MODEL,
             response_format=EmailResponse
@@ -496,49 +517,48 @@ class OutReachAutomationNodes:
         vc_company_data = state["vc_company_data"]
         global_research_report = get_report(reports, "Global Lead Analysis Report")
         
-        # Prepare company context for SPIN questions
-        company_context = f"""
-        company_name: {company_data.name}
-        value_proposition: {company_data.description}
-        tech_innovation_details: {company_data.tech_stack if hasattr(company_data, 'tech_stack') else 'Not available'}
-        market_position_details: {company_data.market_position if hasattr(company_data, 'market_position') else 'Not available'}
-        growth_strategy_details: {company_data.growth_strategy if hasattr(company_data, 'growth_strategy') else 'Not available'}
-        """
+        # Prepare data for SPIN questions
+        our_company = state["our_company_data"]
+        target_company = state["vc_company_data"]
+        lead = state["current_lead"]
         
-        # Generating SPIN questions
+        spin_context = {
+            "company_name": our_company.name,
+            "value_proposition": our_company.value_proposition,
+            "target_market": our_company.target_market,
+            "benefits": our_company.benefits,
+            "target_company_name": target_company.name,
+            "target_company_profile": target_company.profile,
+            "lead_profile": lead.profile
+        }
+        
+        # Generate SPIN questions
         spin_questions = invoke_llm(
-            system_prompt=GENERATE_SPIN_QUESTIONS_PROMPT,
-            user_message=company_context + "\n\n" + global_research_report,
+            system_prompt=GENERATE_SPIN_QUESTIONS_PROMPT.format(**spin_context),
+            user_message=global_research_report,
             model=AI_MODEL
         )
         
-        # Prepare context for interview script
-        company_details = {
-            "company_name": company_data.name,
-            "value_proposition": company_data.description,
-            "innovation_details": company_data.tech_stack if hasattr(company_data, 'tech_stack') else 'Not available',
-            "market_leadership_details": company_data.market_position if hasattr(company_data, 'market_position') else 'Not available',
-            "growth_strategy_details": company_data.growth_strategy if hasattr(company_data, 'growth_strategy') else 'Not available',
-            "specific_area": company_data.industry,
-            "recent_initiative": company_data.recent_news[0] if hasattr(company_data, 'recent_news') and company_data.recent_news else 'Not available',
-            "specific_aspect": company_data.focus_areas[0] if hasattr(company_data, 'focus_areas') and company_data.focus_areas else company_data.industry,
-            "contact_name": state["current_lead"].name,
-            "sender_name": "Your Name"
+        # Prepare data for interview script
+        interview_context = {
+            "company_name": our_company.name,
+            "company_description": our_company.description,
+            "value_proposition": our_company.value_proposition,
+            "benefits": our_company.benefits,
+            "contact_name": lead.name,
+            "target_company": target_company.name
         }
         
+        # Combine all inputs for interview script
         inputs = f"""
-        # **Company Information:**
-        {json.dumps(company_details, indent=2)}
-        
-        # **Research Report:**
+        # Research Report
         {global_research_report}
 
-        # **SPIN questions:**
-
+        # SPIN Questions
         {spin_questions}
         """
         
-        # Generating interview script
+        # Generate interview script
         interview_script = invoke_llm(
             system_prompt=WRITE_INTERVIEW_SCRIPT_PROMPT,
             user_message=inputs,

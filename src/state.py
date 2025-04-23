@@ -8,7 +8,7 @@ class SocialMediaLinks(BaseModel):
     facebook: str = ""
     twitter: str = ""
     youtube: str = ""
-    # Can add other platform
+    linkedin: str = ""
     
 class Report(BaseModel):
     title: str = ""
