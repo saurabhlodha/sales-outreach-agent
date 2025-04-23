@@ -23,6 +23,7 @@ class LeadData(BaseModel):
     email: str = Field(..., description="The email address of the lead")
     phone: str = Field(..., description="The phone number of the lead")
     profile: str = Field(..., description="The lead profile summary from LinkedIn data")
+    vc_company_data: CompanyData = Field(..., description="The company data of the lead")
 
 class CompanyData(BaseModel):
     name: str = Field("", description="The name of the company")
@@ -46,7 +47,6 @@ class GraphState(TypedDict):
     current_lead: LeadData
     lead_score: str = ""
     our_company_data: CompanyData  # Data about our company from pitch deck
-    vc_company_data: CompanyData   # Data about the VC's company we're researching
     reports: Annotated[list[Report], add]
     reports_folder_link: str
     custom_outreach_report_link: str
