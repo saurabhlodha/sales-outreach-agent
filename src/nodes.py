@@ -260,6 +260,7 @@ class OutReachAutomationNodes:
         youtube_url = company_data.social_media_links.youtube
         
         # Check If company has Youtube channel
+        # TODO: Remove the youtube block
         if False and youtube_url:
             youtube_data = get_youtube_stats(youtube_url)
             prompt = YOUTUBE_ANALYSIS_PROMPT.format(company_name=company_data.name)
