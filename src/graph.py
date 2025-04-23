@@ -33,10 +33,8 @@ class OutReachAutomation:
         graph.add_node("analyze_social_media_content", nodes.analyze_social_media_content)
         graph.add_node("analyze_recent_news", nodes.analyze_recent_news)
         graph.add_node("generate_company_profile_report", nodes.generate_company_profile_report)
-        graph.add_node("score_lead", nodes.score_lead)
 
         # Outreach preparation phase
-        graph.add_node("create_outreach_materials", nodes.create_outreach_materials)
         graph.add_node("generate_custom_outreach_report", nodes.generate_custom_outreach_report)
         graph.add_node("generate_personalized_email", nodes.generate_personalized_email)
         graph.add_node("generate_interview_script", nodes.generate_interview_script)
@@ -80,9 +78,8 @@ class OutReachAutomation:
         graph.add_edge("generate_company_profile_report", "generate_custom_outreach_report")
 
         # Outreach material creation
-        graph.add_edge("generate_custom_outreach_report", "create_outreach_materials")
-        graph.add_edge("create_outreach_materials", "generate_personalized_email")
-        graph.add_edge("create_outreach_materials", "generate_interview_script")
+        graph.add_edge("generate_custom_outreach_report", "generate_personalized_email")
+        graph.add_edge("generate_custom_outreach_report", "generate_interview_script")
 
         # Await completion and finalize reports
         graph.add_edge("generate_personalized_email", "await_reports_creation")

@@ -360,10 +360,6 @@ class OutReachAutomationNodes:
         )
         return {"reports": [company_profile_report]}
     
-    @staticmethod
-    def create_outreach_materials(state: GraphState):
-        return {"reports": []}
-    
     def generate_custom_outreach_report(self, state: GraphState):
         print(Fore.YELLOW + "----- Crafting Custom outreach report based on gathered information -----\n" + Style.RESET_ALL)
         
