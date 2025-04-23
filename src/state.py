@@ -45,7 +45,8 @@ class GraphState(TypedDict):
     leads_data: List[dict]
     current_lead: LeadData
     lead_score: str = ""
-    company_data: CompanyData
+    our_company_data: CompanyData  # Data about our company from pitch deck
+    vc_company_data: CompanyData   # Data about the VC's company we're researching
     reports: Annotated[list[Report], add]
     reports_folder_link: str
     custom_outreach_report_link: str
