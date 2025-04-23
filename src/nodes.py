@@ -103,17 +103,17 @@ class OutReachAutomationNodes:
         our_company_data.sales_approach = company_analysis.get("sales_approach", "")
         our_company_data.name = company_analysis.get("company_name", "")
         
-        # Store company data in state
-        state["company_data"] = company_data
+        # Store our company data in state
+        state["our_company_data"] = our_company_data
         
-        print(Fore.GREEN + f"Successfully analyzed pitch deck for {company_data.name}" + Style.RESET_ALL)
-        return { "company_data": company_data }
+        print(Fore.GREEN + f"Successfully analyzed pitch deck for {our_company_data.name}" + Style.RESET_ALL)
+        return { "our_company_data": our_company_data }
 
     def fetch_linkedin_profile_data(self, state: GraphState):
         print(Fore.YELLOW + "----- Searching Lead data on LinkedIn -----\n" + Style.RESET_ALL)
         # print(state)
         lead_data = state["current_lead"]
-        company_data = state.get("company_data", CompanyData())
+        vc_company_data = state.get("vc_company_data", CompanyData())
         
         # Scrape lead linkedin profile
         (
@@ -128,31 +128,30 @@ class OutReachAutomationNodes:
         company_profile = research_lead_company(company_linkedin_url)
         
         # Update company name from LinkedIn data
-        company_data.name = company_name
-        company_data.website = company_website
-        company_data.profile = str(company_profile)
-            
-        # Update folder name for saving reports in Drive
-        self.drive_folder_name = f"{lead_data.name}_{company_data.name}"
-        
+        vc_company_data.name = company_name
+        vc_company_data.website = company_website
+        vc_company_data.profile = str(company_profile)
+
+        # Set the drive folder name
+        self.drive_folder_name = f"{lead_data.name}_{vc_company_data.name}"
+
         return {
-            "current_lead": lead_data,
-            "company_data": company_data,
+            "vc_company_data": vc_company_data,
             "reports": []
         }
 
     def analyze_lead_social_profile(self, state: GraphState):
         print(Fore.YELLOW + "----- Analyzing Twitter profile -----\n" + Style.RESET_ALL)
         lead_data = state.get("current_lead")
-        company_data = state.get("company_data")
-
-        # Find lead Twitter URL by searching on Google 'Twitter {{lead name}} {{company name}}'
-        twitter_handle = extract_twitter_handle(lead_data.name, company_data.name)
+        vc_company_data = state.get("vc_company_data")
+        
+        # Extract twitter handle
+        twitter_handle = extract_twitter_handle(lead_data.name, vc_company_data.name)
         if not twitter_handle:
             print(f"Twitter handle not found for {lead_data.name}")
             return {
                 "current_lead": lead_data,
-                "company_data": company_data
+                "vc_company_data": vc_company_data
             }
 
         # Scrape Twitter profile
@@ -171,15 +170,16 @@ class OutReachAutomationNodes:
 
         return {
             "current_lead": lead_data,
+            "vc_company_data": vc_company_data,
             "reports": [vc_twitter_analysis_report]
         }
     
     def review_company_website(self, state: GraphState):
         print(Fore.YELLOW + "----- Scraping company website -----\n" + Style.RESET_ALL)
         lead_data = state.get("current_lead")
-        company_data = state.get("company_data")
-        
-        company_website = company_data.website
+        vc_company_data = state.get("vc_company_data")
+
+        company_website = vc_company_data.website
         if company_website:
             # Scrape company website
             content = scrape_website_to_markdown(company_website)
@@ -191,13 +191,13 @@ class OutReachAutomationNodes:
             )
 
             # Extract all relevant links
-            company_data.social_media_links.blog = website_info.blog_url
-            company_data.social_media_links.facebook = website_info.facebook
-            company_data.social_media_links.twitter = website_info.twitter
-            company_data.social_media_links.youtube = website_info.youtube
-            
-            # Update company profile with website summary
-            company_data.profile = generate_company_profile(company_data.profile, website_info.summary)
+            vc_company_data.social_media_links.blog = website_info.blog_url
+            vc_company_data.social_media_links.facebook = website_info.facebook
+            vc_company_data.social_media_links.twitter = website_info.twitter
+            vc_company_data.social_media_links.youtube = website_info.youtube
+
+            # Update company profile with website data
+            vc_company_data.profile = generate_company_profile(vc_company_data.profile, website_info.summary)
                  
         inputs = f"""
         # **Lead Profile:**
@@ -206,7 +206,7 @@ class OutReachAutomationNodes:
 
         # **Company Information:**
 
-        {company_data.profile}
+        {vc_company_data.profile}
         """
         
         # Generate general lead search report
@@ -231,7 +231,7 @@ class OutReachAutomationNodes:
         print(Fore.YELLOW + "----- Analyzing company social media accounts -----\n" + Style.RESET_ALL)
         
         # Load states
-        company_data = state["company_data"]
+        vc_company_data = state["vc_company_data"]
         
         # Initialize report variables with empty content
         youtube_analysis_report = Report(
@@ -251,15 +251,15 @@ class OutReachAutomationNodes:
         )
 
         # Get social media urls
-        facebook_url = company_data.social_media_links.facebook
-        twitter_url = company_data.social_media_links.twitter
-        youtube_url = company_data.social_media_links.youtube
+        facebook_url = vc_company_data.social_media_links.facebook
+        twitter_url = vc_company_data.social_media_links.twitter
+        youtube_url = vc_company_data.social_media_links.youtube
         
         # Check If company has Youtube channel
         # TODO: Remove the youtube block
         if False and youtube_url:
             youtube_data = get_youtube_stats(youtube_url)
-            prompt = YOUTUBE_ANALYSIS_PROMPT.format(company_name=company_data.name)
+            prompt = YOUTUBE_ANALYSIS_PROMPT.format(company_name=vc_company_data.name)
             youtube_insight = invoke_llm(
                 system_prompt=prompt, 
                 user_message=youtube_data,
@@ -290,14 +290,14 @@ class OutReachAutomationNodes:
         print(Fore.YELLOW + "----- Analyzing recent news about company -----\n" + Style.RESET_ALL)
         
         # Load states
-        company_data = state["company_data"]
+        vc_company_data = state["vc_company_data"]
         
         # Fetch recent news using serper API
-        recent_news = get_recent_news(company=company_data.name)
+        recent_news = get_recent_news(company=vc_company_data.name)
         number_months = 6
         current_date = get_current_date()
         news_analysis_prompt = NEWS_ANALYSIS_PROMPT.format(
-            company_name=company_data.name, 
+            company_name=vc_company_data.name, 
             number_months=number_months, 
             date=current_date
         )
@@ -339,8 +339,8 @@ class OutReachAutomationNodes:
         """
         
         prompt = COMPANY_PROFILE_REPORT_PROMPT.format(
-            company_name=state["company_data"].name,
-            industry=state["company_data"].industry,
+            company_name=state["vc_company_data"].name,
+            industry=state["vc_company_data"].industry,
             date=get_current_date()
         )
         company_profile_report = invoke_llm(
@@ -435,17 +435,17 @@ class OutReachAutomationNodes:
         reports = state["reports"]
         general_lead_search_report = get_report(reports, "General Lead Research Report")
         
-        company_data = state["company_data"]
+        vc_company_data = state["vc_company_data"]
         lead_data = f"""
         # **Company & Lead Information:**
 
         {general_lead_search_report}
 
         # Company Details:
-        Company Name: {company_data.name}
-        Industry: {company_data.industry}
-        Website: {company_data.website}
-        Value Proposition: {company_data.description}
+        Company Name: {vc_company_data.name}
+        Industry: {vc_company_data.industry}
+        Website: {vc_company_data.website}
+        Value Proposition: {vc_company_data.description}
 
         # Report Link:
         {state["custom_outreach_report_link"]}
@@ -493,7 +493,7 @@ class OutReachAutomationNodes:
         
         # Load reports and company data
         reports = state["reports"]
-        company_data = state["company_data"]
+        vc_company_data = state["vc_company_data"]
         global_research_report = get_report(reports, "Global Lead Analysis Report")
         
         # Prepare company context for SPIN questions
