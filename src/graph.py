@@ -29,7 +29,6 @@ class OutReachAutomation:
         graph.add_node("fetch_linkedin_profile_data", nodes.fetch_linkedin_profile_data)
         graph.add_node("analyze_lead_social_profile", nodes.analyze_lead_social_profile)
         graph.add_node("review_company_website", nodes.review_company_website)
-        graph.add_node("collect_company_information", nodes.collect_company_information)
         graph.add_node("analyze_social_media_content", nodes.analyze_social_media_content)
         graph.add_node("analyze_recent_news", nodes.analyze_recent_news)
         graph.add_node("generate_company_profile_report", nodes.generate_company_profile_report)
@@ -66,11 +65,10 @@ class OutReachAutomation:
         graph.add_edge("generate_prompt_from_pitch_deck", "fetch_linkedin_profile_data")
         graph.add_edge("fetch_linkedin_profile_data", "analyze_lead_social_profile")
         graph.add_edge("analyze_lead_social_profile", "review_company_website")
-        graph.add_edge("review_company_website", "collect_company_information")
 
         # Collect company information and branch into various analyses
-        graph.add_edge("collect_company_information", "analyze_social_media_content")
-        graph.add_edge("collect_company_information", "analyze_recent_news")
+        graph.add_edge("review_company_website", "analyze_social_media_content")
+        graph.add_edge("review_company_website", "analyze_recent_news")
 
         # Analysis results converge into generating reports
         graph.add_edge("analyze_social_media_content", "generate_company_profile_report")

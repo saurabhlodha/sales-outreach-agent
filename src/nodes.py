@@ -18,7 +18,7 @@ from src.tools.base.pdf_tools import read_pdf_content, analyze_pitch_deck
 
 # Enable or disable sending emails directly using GMAIL
 # Should be confident about the quality of the email
-SEND_EMAIL_DIRECTLY = False
+SEND_EMAIL_DIRECTLY = True
 # Enable or disable saving emails to Google Docs
 # By defauly all reports are save locally in `reports` folder
 # Set to True if you want to save reports to Google Docs
@@ -93,15 +93,15 @@ class OutReachAutomationNodes:
         company_analysis = analyze_pitch_deck(pdf_content)
 
         # Update company data in state
-        company_data = CompanyData()
-        company_data.description = company_analysis.get("description", "")
-        company_data.products_services = company_analysis.get("products_services", [])
-        company_data.target_market = company_analysis.get("target_market", "")
-        company_data.value_proposition = company_analysis.get("value_proposition", "")
-        company_data.benefits = company_analysis.get("benefits", [])
-        company_data.industry = company_analysis.get("industry", "")
-        company_data.sales_approach = company_analysis.get("sales_approach", "")
-        company_data.name = company_analysis.get("company_name", "")
+        our_company_data = CompanyData()
+        our_company_data.description = company_analysis.get("description", "")
+        our_company_data.products_services = company_analysis.get("products_services", [])
+        our_company_data.target_market = company_analysis.get("target_market", "")
+        our_company_data.value_proposition = company_analysis.get("value_proposition", "")
+        our_company_data.benefits = company_analysis.get("benefits", [])
+        our_company_data.industry = company_analysis.get("industry", "")
+        our_company_data.sales_approach = company_analysis.get("sales_approach", "")
+        our_company_data.name = company_analysis.get("company_name", "")
         
         # Store company data in state
         state["company_data"] = company_data
@@ -226,10 +226,6 @@ class OutReachAutomationNodes:
             "company_data": company_data,
             "reports": [lead_search_report]
         }
-    
-    @staticmethod
-    def collect_company_information(state: GraphState):
-        return {"reports": []}
     
     def analyze_social_media_content(self, state: GraphState):
         print(Fore.YELLOW + "----- Analyzing company social media accounts -----\n" + Style.RESET_ALL)
@@ -400,7 +396,7 @@ class OutReachAutomationNodes:
 
         **Correct Links:**
 
-        ** Our website link**: {state["company_data"].website}
+        ** Our website link**: {state["our_company_data"].website}
         """
         
         # Call our editor/proof-reader agent
