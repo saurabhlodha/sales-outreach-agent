@@ -32,7 +32,6 @@ class OutReachAutomation:
         graph.add_node("collect_company_information", nodes.collect_company_information)
         graph.add_node("analyze_social_media_content", nodes.analyze_social_media_content)
         graph.add_node("analyze_recent_news", nodes.analyze_recent_news)
-        graph.add_node("generate_full_lead_research_report", nodes.generate_full_lead_research_report)
         graph.add_node("generate_company_profile_report", nodes.generate_company_profile_report)
         graph.add_node("score_lead", nodes.score_lead)
 
@@ -78,8 +77,7 @@ class OutReachAutomation:
         # Analysis results converge into generating reports
         graph.add_edge("analyze_social_media_content", "generate_company_profile_report")
         graph.add_edge("analyze_recent_news", "generate_company_profile_report")
-        graph.add_edge("generate_company_profile_report", "generate_full_lead_research_report")
-        graph.add_edge("generate_full_lead_research_report", "generate_custom_outreach_report")
+        graph.add_edge("generate_company_profile_report", "generate_custom_outreach_report")
 
         # Outreach material creation
         graph.add_edge("generate_custom_outreach_report", "create_outreach_materials")
