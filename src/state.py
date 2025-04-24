@@ -16,15 +16,6 @@ class Report(BaseModel):
     is_markdown: bool = False
 
 # Define the base data needed about the lead
-class LeadData(BaseModel):
-    id: str = Field(..., description="The unique identifier for the lead being processed")
-    name: str = Field(..., description="The full name of the lead")
-    address: str = Field(..., description="The address of the lead")
-    email: str = Field(..., description="The email address of the lead")
-    phone: str = Field(..., description="The phone number of the lead")
-    profile: str = Field(..., description="The lead profile summary from LinkedIn data")
-    vc_company_data: CompanyData = Field(..., description="The company data of the lead")
-
 class CompanyData(BaseModel):
     name: str = Field("", description="The name of the company")
     website: str = Field("", description="The company's website URL")
@@ -37,6 +28,15 @@ class CompanyData(BaseModel):
     industry: str = Field("", description="The industry the company operates in")
     sales_approach: str = Field("", description="The company's sales approach")
     social_media_links: SocialMediaLinks = Field(default_factory=SocialMediaLinks)
+
+class LeadData(BaseModel):
+    id: str = Field(..., description="The unique identifier for the lead being processed")
+    name: str = Field(..., description="The full name of the lead")
+    address: str = Field(..., description="The address of the lead")
+    email: str = Field(..., description="The email address of the lead")
+    phone: str = Field(..., description="The phone number of the lead")
+    profile: str = Field(..., description="The lead profile summary from LinkedIn data")
+    vc_company_data: CompanyData = Field(..., description="The company data of the lead")
 
 class GraphInputState(TypedDict):
     leads_ids: List[str]
