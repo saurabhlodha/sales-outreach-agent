@@ -18,7 +18,7 @@ from src.tools.base.pdf_tools import read_pdf_content, analyze_pitch_deck
 
 # Enable or disable sending emails directly using GMAIL
 # Should be confident about the quality of the email
-SEND_EMAIL_DIRECTLY = True
+SEND_EMAIL_DIRECTLY = os.environ['SEND_EMAIL_DIRECTLY', False]
 # Enable or disable saving emails to Google Docs
 # By defauly all reports are save locally in `reports` folder
 # Set to True if you want to save reports to Google Docs
@@ -51,6 +51,7 @@ class OutReachAutomationNodes:
                 phone=lead.get("Phone", ""),
                 address=lead.get("Address", ""),
                 vc_company_data=CompanyData(name=lead.get("Company Name", "")),
+                social_media_links=SocialMediaLinks(linkedin=lead.get("Linkedin URL", "")),
                 profile="" # will be constructed
             )
             for lead in raw_leads
@@ -122,7 +123,7 @@ class OutReachAutomationNodes:
             company_name, 
             company_website,
             company_linkedin_url
-        ) = research_lead_on_linkedin(lead_data.name, lead_data.email)
+        ) = research_lead_on_linkedin(lead_data.name, lead_data.email, lead_data.social_media_links.linkedin)
         lead_data.profile = lead_profile
 
         # Research company on linkedin

@@ -37,6 +37,7 @@ class LeadData(BaseModel):
     phone: str = Field(..., description="The phone number of the lead")
     profile: str = Field(..., description="The lead profile summary from LinkedIn data")
     vc_company_data: CompanyData = Field(..., description="The company data of the lead")
+    social_media_links: SocialMediaLinks = Field(default_factory=SocialMediaLinks)
 
 class GraphInputState(TypedDict):
     leads_ids: List[str]

@@ -36,7 +36,7 @@ def extract_company_name(email):
     except IndexError:
         return "Company not found"
 
-def research_lead_on_linkedin(lead_name, lead_email):
+def research_lead_on_linkedin(lead_name, lead_email, lead_linkedin_url=""):
     """
     Searches for the lead's LinkedIn profile based on the lead name and company name.
     
@@ -45,11 +45,14 @@ def research_lead_on_linkedin(lead_name, lead_email):
     """
     # extract company name from pro email
     company_name = extract_company_name(lead_email)
-        
-    # Find lead LinkedIn URL by searching on Google 'LinkedIn {{lead name}} {{company name}}'
-    query = f"LinkedIn {lead_name} {company_name}"
-    search_results = google_search(query)
-    lead_linkedin_url = extract_linkedin_url(search_results)
+    
+    # If lead linkedin url is not provided, find it on Google
+    if not lead_linkedin_url:
+        # Find lead LinkedIn URL by searching on Google 'LinkedIn {{lead name}} {{company name}}'
+        query = f"LinkedIn {lead_name} {company_name}"
+        search_results = google_search(query)
+        lead_linkedin_url = extract_linkedin_url(search_results)
+
     if not lead_linkedin_url:
         return "Lead LinkedIn URL not found."
 
