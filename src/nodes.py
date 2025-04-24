@@ -99,26 +99,26 @@ class OutReachAutomationNodes:
         # Analyze our pitch deck content
         company_analysis = analyze_pitch_deck(pdf_content)
 
-            # Update our company data
-            self.our_company_data = CompanyData()
-            self.our_company_data.description = company_analysis.get("description", "")
-            self.our_company_data.products_services = company_analysis.get("products_services", [])
-            self.our_company_data.target_market = company_analysis.get("target_market", "")
-            self.our_company_data.value_proposition = company_analysis.get("value_proposition", "")
-            self.our_company_data.benefits = company_analysis.get("benefits", [])
-            self.our_company_data.industry = company_analysis.get("industry", "")
-            self.our_company_data.sales_approach = company_analysis.get("sales_approach", "")
-            self.our_company_data.name = company_analysis.get("company_name", "")
-            self.our_company_data.funding_stage = company_analysis.get("funding_stage", "")
-            self.our_company_data.geography = company_analysis.get("geography", "")
-            self.our_company_data.tech_stack = company_analysis.get("tech_stack", [])
-            self.our_company_data.keywords = company_analysis.get("keywords", [])
-            self.our_company_data.partnerships = company_analysis.get("partnerships", [])
-            self.our_company_data.differentiators = company_analysis.get("differentiators", [])
-            self.our_company_data.vc_fit = company_analysis.get("vc_fit", [])
-            self.our_company_data.esg_impact = company_analysis.get("esg_impact", "")
-            
-            print(Fore.GREEN + f"Successfully analyzed pitch deck for {self.our_company_data.name}" + Style.RESET_ALL)
+        # Update our company data
+        self.our_company_data = CompanyData()
+        self.our_company_data.description = company_analysis.get("description", "")
+        self.our_company_data.products_services = company_analysis.get("products_services", [])
+        self.our_company_data.target_market = company_analysis.get("target_market", "")
+        self.our_company_data.value_proposition = company_analysis.get("value_proposition", "")
+        self.our_company_data.benefits = company_analysis.get("benefits", [])
+        self.our_company_data.industry = company_analysis.get("industry", "")
+        self.our_company_data.sales_approach = company_analysis.get("sales_approach", "")
+        self.our_company_data.name = company_analysis.get("company_name", "")
+        self.our_company_data.funding_stage = company_analysis.get("funding_stage", "")
+        self.our_company_data.geography = company_analysis.get("geography", "")
+        self.our_company_data.tech_stack = company_analysis.get("tech_stack", [])
+        self.our_company_data.keywords = company_analysis.get("keywords", [])
+        self.our_company_data.partnerships = company_analysis.get("partnerships", [])
+        self.our_company_data.differentiators = company_analysis.get("differentiators", [])
+        self.our_company_data.vc_fit = company_analysis.get("vc_fit", [])
+        self.our_company_data.esg_impact = company_analysis.get("esg_impact", "")
+        
+        print(Fore.GREEN + f"Successfully analyzed pitch deck for {self.our_company_data.name}" + Style.RESET_ALL)
         
         # Update state and class variables
         state["our_company_data"] = self.our_company_data
