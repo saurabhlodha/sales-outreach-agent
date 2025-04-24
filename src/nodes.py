@@ -374,7 +374,7 @@ class OutReachAutomationNodes:
         
         # Get reports from manager
         general_lead_search_report = self.report_manager.get_report("General Lead Research Report")
-        global_research_report = self.report_manager.get_report("Global Lead Analysis Report")
+        company_profile_report = self.report_manager.get_report("Company Profile Report")
         
         # Get relevant case study
         case_study_report = fetch_similar_case_study(general_lead_search_report)
@@ -382,7 +382,7 @@ class OutReachAutomationNodes:
         inputs = f"""
         **Research Report:**
 
-        {global_research_report}
+        {company_profile_report}
 
         ---
 
@@ -512,7 +512,7 @@ class OutReachAutomationNodes:
         print(Fore.YELLOW + "----- Generating interview script -----\n" + Style.RESET_ALL)
         
         # Load reports and company data
-        global_research_report = self.report_manager.get_report("Global Lead Analysis Report")
+        company_profile_report = self.report_manager.get_report("Company Profile Report")
         
         # Prepare data for SPIN questions
         our_company = state["our_company_data"]
@@ -532,7 +532,7 @@ class OutReachAutomationNodes:
         # Generate SPIN questions
         spin_questions = invoke_llm(
             system_prompt=GENERATE_SPIN_QUESTIONS_PROMPT.format(**spin_context),
-            user_message=global_research_report,
+            user_message=company_profile_report,
             model=AI_MODEL
         )
         
@@ -549,7 +549,7 @@ class OutReachAutomationNodes:
         # Combine all inputs for interview script
         inputs = f"""
         # Research Report
-        {global_research_report}
+        {company_profile_report}
 
         # SPIN Questions
         {spin_questions}
