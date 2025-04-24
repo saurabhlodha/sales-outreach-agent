@@ -25,7 +25,7 @@ class OutReachAutomation:
         graph.add_node("check_for_remaining_leads", nodes.check_for_remaining_leads)
 
         # Research phase: gather data and insights about the lead
-        graph.add_node("generate_prompt_from_pitch_deck", nodes.generate_prompt_from_pitch_deck)
+        graph.add_node("gather_lead_company_data", nodes.gather_lead_company_data)
         graph.add_node("fetch_linkedin_profile_data", nodes.fetch_linkedin_profile_data)
         graph.add_node("analyze_lead_social_profile", nodes.analyze_lead_social_profile)
         graph.add_node("review_company_website", nodes.review_company_website)
@@ -56,13 +56,13 @@ class OutReachAutomation:
             "check_for_remaining_leads",
             nodes.check_if_there_more_leads,
             {
-                "Found leads": "generate_prompt_from_pitch_deck",  # Proceed if leads are found
+                "Found leads": "gather_lead_company_data",  # Proceed if leads are found
                 "No more leads": END  # Terminate if no leads remain
             }
         )
 
         # Research phase transitions
-        graph.add_edge("generate_prompt_from_pitch_deck", "fetch_linkedin_profile_data")
+        graph.add_edge("gather_lead_company_data", "fetch_linkedin_profile_data")
         graph.add_edge("fetch_linkedin_profile_data", "analyze_lead_social_profile")
         graph.add_edge("analyze_lead_social_profile", "review_company_website")
 

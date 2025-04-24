@@ -11,14 +11,14 @@ from .tools.company_research import research_lead_company, generate_company_prof
 from .tools.youtube_tools import get_youtube_stats
 from .tools.rag_tool import fetch_similar_case_study
 from .prompts import *
-from .state import LeadData, CompanyData, Report, GraphInputState, GraphState
+from .state import LeadData, CompanyData, Report, GraphInputState, GraphState, SocialMediaLinks
 from .structured_outputs import WebsiteData, EmailResponse
 from .utils import invoke_llm, get_report, get_current_date, save_reports_locally
 from src.tools.base.pdf_tools import read_pdf_content, analyze_pitch_deck
 
 # Enable or disable sending emails directly using GMAIL
 # Should be confident about the quality of the email
-SEND_EMAIL_DIRECTLY = os.environ['SEND_EMAIL_DIRECTLY', False]
+SEND_EMAIL_DIRECTLY = False
 # Enable or disable saving emails to Google Docs
 # By defauly all reports are save locally in `reports` folder
 # Set to True if you want to save reports to Google Docs
@@ -81,7 +81,7 @@ class OutReachAutomationNodes:
             print(Fore.GREEN + "----- Finished, No more leads -----\n" + Style.RESET_ALL)
             return "No more leads"
 
-    def generate_prompt_from_pitch_deck(self, state: GraphState):
+    def gather_lead_company_data(self, state: GraphState):
         print(Fore.YELLOW + "----- Generating prompt from pitch deck -----\n" + Style.RESET_ALL)
 
         # Read and analyze the pitch deck
@@ -104,6 +104,9 @@ class OutReachAutomationNodes:
         our_company_data.industry = company_analysis.get("industry", "")
         our_company_data.sales_approach = company_analysis.get("sales_approach", "")
         our_company_data.name = company_analysis.get("company_name", "")
+
+        # TODO: Analyse the target company's linkedin profile, website and generate company profile
+        # company_linkedin_data = research_lead_company(company_linkedin_url)
         
         # Store our company data in state
         state["our_company_data"] = our_company_data
