@@ -7,7 +7,7 @@ from .tools.base.gmail_tools import GmailTools
 from .tools.google_docs_tools import GoogleDocsManager
 from .tools.lead_research import research_lead_on_linkedin
 from .tools.base.twitter_tools import extract_twitter_handle, get_twitter_timeline
-from .tools.company_research import research_lead_company, generate_company_profile
+from .tools.company_research import analyze_vc_firm, generate_company_profile
 from .tools.youtube_tools import get_youtube_stats
 from .tools.rag_tool import fetch_similar_case_study
 from .prompts import *
@@ -82,19 +82,19 @@ class OutReachAutomationNodes:
             return "No more leads"
 
     def gather_lead_company_data(self, state: GraphState):
-        print(Fore.YELLOW + "----- Generating prompt from pitch deck -----\n" + Style.RESET_ALL)
+        print(Fore.YELLOW + "----- Analyzing our pitch deck -----\n" + Style.RESET_ALL)
 
-        # Read and analyze the pitch deck
+        # Read and analyze our pitch deck
         pdf_path = os.getenv("PITCH_DECK_PATH", "data/decks/target.pdf")
         pdf_content = read_pdf_content(pdf_path)
         if not pdf_content:
             print(Fore.RED + f"Error: Could not read pitch deck at {pdf_path}" + Style.RESET_ALL)
             return "No more leads"
             
-        # Analyze pitch deck content
+        # Analyze our pitch deck content
         company_analysis = analyze_pitch_deck(pdf_content)
 
-        # Update company data in state
+        # Update our company data in state
         our_company_data = CompanyData()
         our_company_data.description = company_analysis.get("description", "")
         our_company_data.products_services = company_analysis.get("products_services", [])
@@ -104,6 +104,24 @@ class OutReachAutomationNodes:
         our_company_data.industry = company_analysis.get("industry", "")
         our_company_data.sales_approach = company_analysis.get("sales_approach", "")
         our_company_data.name = company_analysis.get("company_name", "")
+        our_company_data.funding_stage = company_analysis.get("funding_stage", "")
+        our_company_data.geography = company_analysis.get("geography", "")
+        our_company_data.tech_stack = company_analysis.get("tech_stack", [])
+        our_company_data.keywords = company_analysis.get("keywords", [])
+        our_company_data.partnerships = company_analysis.get("partnerships", [])
+        our_company_data.differentiators = company_analysis.get("differentiators", [])
+        our_company_data.vc_fit = company_analysis.get("vc_fit", [])
+        our_company_data.esg_impact = company_analysis.get("esg_impact", "")
+        
+        print(Fore.GREEN + f"Successfully analyzed pitch deck for {our_company_data.name}" + Style.RESET_ALL)
+        
+        # Read and analyze VC firm materials
+        # Store our company data in state
+        state["our_company_data"] = our_company_data
+        
+        print(Fore.GREEN + f"Successfully analyzed pitch deck for {our_company_data.name}" + Style.RESET_ALL)
+        
+        # We'll analyze the VC firm in the fetch_linkedin_profile_data step when we have their LinkedIn URL and website
 
         # TODO: Analyse the target company's linkedin profile, website and generate company profile
         # company_linkedin_data = research_lead_company(company_linkedin_url)
@@ -111,14 +129,15 @@ class OutReachAutomationNodes:
         # Store our company data in state
         state["our_company_data"] = our_company_data
         
-        print(Fore.GREEN + f"Successfully analyzed pitch deck for {our_company_data.name}" + Style.RESET_ALL)
-        return { "our_company_data": our_company_data }
+        return { 
+            "our_company_data": our_company_data,
+            "current_lead": state['current_lead']
+        }
 
     def fetch_linkedin_profile_data(self, state: GraphState):
         print(Fore.YELLOW + "----- Searching Lead data on LinkedIn -----\n" + Style.RESET_ALL)
         # print(state)
         lead_data = state["current_lead"]
-        vc_company_data = lead_data.vc_company_data
         
         # Scrape lead linkedin profile
         (
@@ -129,13 +148,31 @@ class OutReachAutomationNodes:
         ) = research_lead_on_linkedin(lead_data.name, lead_data.email, lead_data.social_media_links.linkedin)
         lead_data.profile = lead_profile
 
-        # Research company on linkedin
-        company_profile = research_lead_company(company_linkedin_url)
+        print(Fore.YELLOW + "----- Analyzing VC firm from web presence -----\n" + Style.RESET_ALL)
         
-        # Update company name from LinkedIn data
-        vc_company_data.name = company_name
+        # Analyze VC firm from their web presence
+        vc_analysis = analyze_vc_firm(company_linkedin_url, company_website)
+        
+        # Update VC company data
+        vc_company_data = lead_data.vc_company_data
+        vc_company_data.name = vc_analysis.get("company_name", company_name)
         vc_company_data.website = company_website
-        vc_company_data.profile = str(company_profile)
+        vc_company_data.description = vc_analysis.get("description", "")
+        vc_company_data.investment_focus = vc_analysis.get("investment_focus", [])
+        vc_company_data.portfolio_companies = vc_analysis.get("portfolio_companies", [])
+        vc_company_data.investment_stages = vc_analysis.get("investment_stages", [])
+        vc_company_data.investment_size = vc_analysis.get("investment_size", "")
+        vc_company_data.geographic_focus = vc_analysis.get("geographic_focus", [])
+        vc_company_data.investment_thesis = vc_analysis.get("investment_thesis", "")
+        vc_company_data.recent_exits = vc_analysis.get("recent_exits", [])
+        vc_company_data.industry = vc_analysis.get("industry", "")
+        vc_company_data.tech_stack = vc_analysis.get("tech_stack", [])
+        vc_company_data.value_add = vc_analysis.get("value_add", [])
+        vc_company_data.esg_impact = vc_analysis.get("esg_impact", "")
+        vc_company_data.key_partners = vc_analysis.get("key_partners", [])
+        vc_company_data.investment_process = vc_analysis.get("investment_process", "")
+        
+        print(Fore.GREEN + f"Successfully analyzed VC firm {vc_company_data.name} from web presence" + Style.RESET_ALL)
         lead_data.vc_company_data = vc_company_data
 
         # Set the drive folder name
