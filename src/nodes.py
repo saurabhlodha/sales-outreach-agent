@@ -11,7 +11,7 @@ from .tools.company_research import analyze_vc_firm, generate_company_profile
 from .tools.youtube_tools import get_youtube_stats
 from .tools.rag_tool import fetch_similar_case_study
 from .prompts import *
-from .state import LeadData, CompanyData, Report, GraphInputState, GraphState, SocialMediaLinks
+from .state import LeadData, CompanyData, VCCompanyData, Report, GraphInputState, GraphState, SocialMediaLinks
 from .structured_outputs import WebsiteData, EmailResponse
 from .utils import invoke_llm, get_current_date, save_reports_locally
 from src.tools.base.pdf_tools import read_pdf_content, analyze_pitch_deck
@@ -55,7 +55,7 @@ class OutReachAutomationNodes:
                 email=lead.get("Email", ""),
                 phone=lead.get("Phone", ""),
                 address=lead.get("Address", ""),
-                vc_company_data=CompanyData(name=lead.get("Company Name", "")),
+                vc_company_data=VCCompanyData(name=lead.get("Company Name", "")),
                 social_media_links=SocialMediaLinks(linkedin=lead.get("Linkedin URL", "")),
                 profile="" # will be constructed
             )
@@ -512,9 +512,7 @@ class OutReachAutomationNodes:
         print(Fore.YELLOW + "----- Generating interview script -----\n" + Style.RESET_ALL)
         
         # Load reports and company data
-        reports = state["reports"]
-        vc_company_data = state["current_lead"].vc_company_data
-        global_research_report = get_report(reports, "Global Lead Analysis Report")
+        global_research_report = self.report_manager.get_report("Global Lead Analysis Report")
         
         # Prepare data for SPIN questions
         our_company = state["our_company_data"]

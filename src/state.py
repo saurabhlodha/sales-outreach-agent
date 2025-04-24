@@ -45,6 +45,9 @@ class VCCompanyData(CompanyData):
     geographic_focus: List[str] = Field(default_factory=list, description="Geographic regions of interest")
     investment_thesis: str = Field("", description="Key investment thesis or criteria")
     recent_exits: List[str] = Field(default_factory=list, description="Recent successful exits")
+    value_add: List[str] = Field(default_factory=list, description="Value add services or support provided to portfolio companies")
+    key_partners: List[str] = Field(default_factory=list, description="Key team members and partners")
+    investment_process: str = Field("", description="Description of the investment process")
 
 class LeadData(BaseModel):
     id: str = Field(..., description="The unique identifier for the lead being processed")

@@ -1,4 +1,4 @@
-from .reports import Report
+from src.state import Report
 
 class ReportManager:
     def __init__(self):

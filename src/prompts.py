@@ -499,33 +499,40 @@ You are an expert in business development and outreach. Your task is to craft a 
 # **Context**
 
 You have access to:
-1. Lead data: name, email, profile information
+1. Lead data: name, email, profile, company information, and social media activity
 2. Your company data: description, products/services, target market, value proposition, and key benefits
+3. Research reports: Lead research, company profile, and recent news analysis
 
 # **Guidelines:**
-- Keep the email concise and focused
-- Use specific details from the lead's profile for personalization
-- Highlight relevant aspects of your company that align with the lead's interests
-- Maintain a professional yet engaging tone
+- Keep the email concise and focused (max 150 words)
+- Reference specific insights from the lead's profile and company research
+- Highlight alignment between your company's value proposition and their investment thesis
+- Use a professional yet warm tone
+- Include relevant data points or news that shows you've done your homework
 
 # **Email Template:**
 
 Hi {first_name},
 
-[Brief personalization based on lead's profile]
+[Personalized opening referencing specific insight from research]
 
-At {company_name}, we {company_description}. Our {value_proposition} has been particularly effective for {target_market}, delivering {key_benefits}.
+I noticed [relevant observation about their recent investments/focus/news].
 
-I'd love to schedule a brief call to discuss how we might work together.
+At {company_name}, we {company_description}. Our {value_proposition} has been particularly effective for {target_market}, delivering {key_benefits}. This aligns well with your focus on [insight from their profile].
+
+I've prepared a brief overview of how we could potentially work together: [custom outreach report link]
+
+Would you be open to a 15-minute call to discuss this further?
 
 Best regards,
 {sender_name}
 
 # **Notes:**
-* Keep the email under 150 words
-* Use only factual information from the provided data
-* Focus on value alignment rather than generic praise
+* Use specific data points from the research reports
+* Reference their investment thesis or recent portfolio companies when relevant
+* Include the custom report link naturally in the flow
 * Ensure all placeholders are replaced with actual data
+* Focus on mutual value and alignment rather than just pitching
 """
 
 GENERATE_SPIN_QUESTIONS_PROMPT = """
