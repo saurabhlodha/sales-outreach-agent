@@ -2,7 +2,7 @@ import os
 import json
 import PyPDF2
 from src.utils import invoke_llm
-from src.prompts import PITCH_DECK_ANALYSIS_PROMPT
+from src.prompts import PITCH_DECK_ANALYSIS_PROMPT, VC_FIRM_ANALYSIS_PROMPT
 
 # Model to use
 AI_MODEL = os.environ['AI_MODEL']
@@ -41,5 +41,13 @@ def analyze_pitch_deck(pdf_content):
             "value_proposition": "",
             "benefits": [],
             "industry": "",
-            "sales_approach": ""
+            "sales_approach": "",
+            "funding_stage": "",
+            "geography": "",
+            "tech_stack": [],
+            "keywords": [],
+            "partnerships": [],
+            "differentiators": [],
+            "vc_fit": [],
+            "esg_impact": ""
         }

@@ -13,8 +13,9 @@ from .tools.rag_tool import fetch_similar_case_study
 from .prompts import *
 from .state import LeadData, CompanyData, Report, GraphInputState, GraphState, SocialMediaLinks
 from .structured_outputs import WebsiteData, EmailResponse
-from .utils import invoke_llm, get_report, get_current_date, save_reports_locally
+from .utils import invoke_llm, get_current_date, save_reports_locally
 from src.tools.base.pdf_tools import read_pdf_content, analyze_pitch_deck
+from src.tools.reports_manager import ReportManager
 
 # Enable or disable sending emails directly using GMAIL
 # Should be confident about the quality of the email
@@ -35,6 +36,10 @@ class OutReachAutomationNodes:
         self.lead_loader = loader
         self.docs_manager = GoogleDocsManager()
         self.drive_folder_name = ""
+        self.report_manager = ReportManager()
+        self.our_company_data = None
+        self.current_lead = None
+        self.vc_company_data = None
 
     def get_new_leads(self, state: GraphInputState):
         print(Fore.YELLOW + "----- Fetching new leads -----\n" + Style.RESET_ALL)
@@ -94,44 +99,35 @@ class OutReachAutomationNodes:
         # Analyze our pitch deck content
         company_analysis = analyze_pitch_deck(pdf_content)
 
-        # Update our company data in state
-        our_company_data = CompanyData()
-        our_company_data.description = company_analysis.get("description", "")
-        our_company_data.products_services = company_analysis.get("products_services", [])
-        our_company_data.target_market = company_analysis.get("target_market", "")
-        our_company_data.value_proposition = company_analysis.get("value_proposition", "")
-        our_company_data.benefits = company_analysis.get("benefits", [])
-        our_company_data.industry = company_analysis.get("industry", "")
-        our_company_data.sales_approach = company_analysis.get("sales_approach", "")
-        our_company_data.name = company_analysis.get("company_name", "")
-        our_company_data.funding_stage = company_analysis.get("funding_stage", "")
-        our_company_data.geography = company_analysis.get("geography", "")
-        our_company_data.tech_stack = company_analysis.get("tech_stack", [])
-        our_company_data.keywords = company_analysis.get("keywords", [])
-        our_company_data.partnerships = company_analysis.get("partnerships", [])
-        our_company_data.differentiators = company_analysis.get("differentiators", [])
-        our_company_data.vc_fit = company_analysis.get("vc_fit", [])
-        our_company_data.esg_impact = company_analysis.get("esg_impact", "")
+            # Update our company data
+            self.our_company_data = CompanyData()
+            self.our_company_data.description = company_analysis.get("description", "")
+            self.our_company_data.products_services = company_analysis.get("products_services", [])
+            self.our_company_data.target_market = company_analysis.get("target_market", "")
+            self.our_company_data.value_proposition = company_analysis.get("value_proposition", "")
+            self.our_company_data.benefits = company_analysis.get("benefits", [])
+            self.our_company_data.industry = company_analysis.get("industry", "")
+            self.our_company_data.sales_approach = company_analysis.get("sales_approach", "")
+            self.our_company_data.name = company_analysis.get("company_name", "")
+            self.our_company_data.funding_stage = company_analysis.get("funding_stage", "")
+            self.our_company_data.geography = company_analysis.get("geography", "")
+            self.our_company_data.tech_stack = company_analysis.get("tech_stack", [])
+            self.our_company_data.keywords = company_analysis.get("keywords", [])
+            self.our_company_data.partnerships = company_analysis.get("partnerships", [])
+            self.our_company_data.differentiators = company_analysis.get("differentiators", [])
+            self.our_company_data.vc_fit = company_analysis.get("vc_fit", [])
+            self.our_company_data.esg_impact = company_analysis.get("esg_impact", "")
+            
+            print(Fore.GREEN + f"Successfully analyzed pitch deck for {self.our_company_data.name}" + Style.RESET_ALL)
         
-        print(Fore.GREEN + f"Successfully analyzed pitch deck for {our_company_data.name}" + Style.RESET_ALL)
-        
-        # Read and analyze VC firm materials
-        # Store our company data in state
-        state["our_company_data"] = our_company_data
-        
-        print(Fore.GREEN + f"Successfully analyzed pitch deck for {our_company_data.name}" + Style.RESET_ALL)
-        
-        # We'll analyze the VC firm in the fetch_linkedin_profile_data step when we have their LinkedIn URL and website
-
-        # TODO: Analyse the target company's linkedin profile, website and generate company profile
-        # company_linkedin_data = research_lead_company(company_linkedin_url)
-        
-        # Store our company data in state
-        state["our_company_data"] = our_company_data
+        # Update state and class variables
+        state["our_company_data"] = self.our_company_data
+        self.current_lead = state["current_lead"]
+        self.vc_company_data = self.current_lead.vc_company_data
         
         return { 
-            "our_company_data": our_company_data,
-            "current_lead": state['current_lead']
+            "our_company_data": self.our_company_data,
+            "current_lead": self.current_lead
         }
 
     def fetch_linkedin_profile_data(self, state: GraphState):
@@ -184,38 +180,38 @@ class OutReachAutomationNodes:
         }
 
     def analyze_lead_social_profile(self, state: GraphState):
-        print(Fore.YELLOW + "----- Analyzing Twitter profile -----\n" + Style.RESET_ALL)
-        lead_data = state.get("current_lead")
-        vc_company_data = state["current_lead"].vc_company_data
+        print(Fore.YELLOW + "----- Analyzing social profiles -----\n" + Style.RESET_ALL)
         
         # Extract twitter handle
-        twitter_handle = extract_twitter_handle(lead_data.name, vc_company_data.name)
-        if not twitter_handle:
-            print(f"Twitter handle not found for {lead_data.name}")
-            return {
-                "current_lead": lead_data,
-                "vc_company_data": vc_company_data
-            }
+        twitter_handle = extract_twitter_handle(self.current_lead.name, self.vc_company_data.name)
+        
+        reports = []
+        
+        # Analyze Twitter if handle found
+        if twitter_handle:
+            print(Fore.YELLOW + "Analyzing Twitter profile..." + Style.RESET_ALL)
+            twitter_profile = get_twitter_timeline(twitter_handle)
+            prompt = VC_TWITTER_ANALYSIS_PROMPT.format(lead_name=self.current_lead.name)
+            twitter_insight = invoke_llm(
+                system_prompt=prompt, 
+                user_message=twitter_profile,
+                model=AI_MODEL
+            )
+            self.report_manager.add_report(Report(
+                title="VC Twitter Analysis Report",
+                content=twitter_insight,
+                is_markdown=True
+            ))
+        else:
+            print(f"Twitter handle not found for {self.current_lead.name}")
 
-        # Scrape Twitter profile
-        twitter_profile = get_twitter_timeline(twitter_handle)
-        prompt = VC_TWITTER_ANALYSIS_PROMPT.format(lead_name=lead_data.name)
-        twitter_insight = invoke_llm(
-            system_prompt=prompt, 
-            user_message=twitter_profile,
-            model=AI_MODEL
-        )
-        vc_twitter_analysis_report = Report(
-            title="VC Twitter Analysis Report",
-            content=twitter_insight,
-            is_markdown=True
-        )
+        # Analyze other social media if available
+        if self.vc_company_data.social_media_links.linkedin:
+            print(Fore.YELLOW + "Analyzing LinkedIn presence..." + Style.RESET_ALL)
+            # LinkedIn analysis is already done in fetch_linkedin_profile_data
+            pass
 
-        return {
-            "current_lead": lead_data,
-            # vc_company_data is now stored in current_lead
-            "reports": [vc_twitter_analysis_report]
-        }
+        return {"current_lead": self.current_lead}
     
     def review_company_website(self, state: GraphState):
         print(Fore.YELLOW + "----- Scraping company website -----\n" + Style.RESET_ALL)
@@ -280,102 +276,69 @@ class OutReachAutomationNodes:
     def analyze_social_media_content(self, state: GraphState):
         print(Fore.YELLOW + "----- Analyzing company social media accounts -----\n" + Style.RESET_ALL)
         
-        # Load states
-        vc_company_data = state["current_lead"].vc_company_data
-        
-        # Initialize report variables with empty content
-        youtube_analysis_report = Report(
-            title="Youtube Analysis Report",
-            content="No YouTube channel found or analysis not available.",
-            is_markdown=True
-        )
-        facebook_analysis_report = Report(
-            title="Facebook Analysis Report",
-            content="No Facebook profile found or analysis not available.",
-            is_markdown=True
-        )
-        twitter_analysis_report = Report(
-            title="Twitter Analysis Report",
-            content="No Twitter profile found or analysis not available.",
-            is_markdown=True
-        )
-
         # Get social media urls
-        facebook_url = vc_company_data.social_media_links.facebook
-        twitter_url = vc_company_data.social_media_links.twitter
-        youtube_url = vc_company_data.social_media_links.youtube
+        social_links = self.vc_company_data.social_media_links
         
         # Check If company has Youtube channel
-        # TODO: Remove the youtube block
-        if False and youtube_url:
-            youtube_data = get_youtube_stats(youtube_url)
-            prompt = YOUTUBE_ANALYSIS_PROMPT.format(company_name=vc_company_data.name)
+        if social_links.youtube:
+            print(Fore.YELLOW + "Analyzing YouTube channel..." + Style.RESET_ALL)
+            youtube_data = get_youtube_stats(social_links.youtube)
+            prompt = YOUTUBE_ANALYSIS_PROMPT.format(company_name=self.vc_company_data.name)
             youtube_insight = invoke_llm(
                 system_prompt=prompt, 
                 user_message=youtube_data,
                 model=AI_MODEL
             )
-            youtube_analysis_report = Report(
+            self.report_manager.add_report(Report(
                 title="Youtube Analysis Report",
                 content=youtube_insight,
                 is_markdown=True
-            )
+            ))
             
         # Check If company has Facebook account
-        if facebook_url:
-            # TODO Add Facebook analysis part
+        if social_links.facebook:
+            print(Fore.YELLOW + "Facebook analysis not yet implemented" + Style.RESET_ALL)
+            # TODO: Add Facebook analysis
             pass
         
-        # Check If company has Twitter account
-        if twitter_url:
-            # TODO Add Twitter analysis part
-            pass
+        # Note: Twitter analysis is handled in analyze_lead_social_profile
         
-        return {
-            # vc_company_data is now stored in current_lead
-            "reports": [youtube_analysis_report]
-        }
+        return {}
 
     def analyze_recent_news(self, state: GraphState):
         print(Fore.YELLOW + "----- Analyzing recent news about company -----\n" + Style.RESET_ALL)
         
-        # Load states
-        vc_company_data = state["current_lead"].vc_company_data
-        
         # Fetch recent news using serper API
-        recent_news = get_recent_news(company=vc_company_data.name)
+        recent_news = get_recent_news(company=self.vc_company_data.name)
         number_months = 6
         current_date = get_current_date()
         news_analysis_prompt = NEWS_ANALYSIS_PROMPT.format(
-            company_name=vc_company_data.name, 
+            company_name=self.vc_company_data.name, 
             number_months=number_months, 
             date=current_date
         )
         
-        # Craft news analysis prompt
+        # Analyze recent news
         news_insight = invoke_llm(
             system_prompt=news_analysis_prompt, 
             user_message=recent_news,
             model=AI_MODEL
         )
         
-        news_analysis_report = Report(
+        # Add report to manager
+        self.report_manager.add_report(Report(
             title="News Analysis Report",
             content=news_insight,
             is_markdown=True
-        )
-        return {"reports": [news_analysis_report]}
+        ))
+        return {}
     
     def generate_company_profile_report(self, state: GraphState):
         print(Fore.YELLOW + "----- Generate company profile report -----\n" + Style.RESET_ALL)
         
-        # Load reports
-        reports = state["reports"]
-        facebook_analysis_report = get_report(reports, "Facebook Analysis Report")
-        twitter_analysis_report = get_report(reports, "Twitter Analysis Report")
-        youtube_analysis_report = get_report(reports, "Youtube Analysis Report")
-        news_analysis_report = get_report(reports, "News Analysis Report")
-        vc_twitter_analysis_report = get_report(reports, "VC Twitter Analysis Report")
+        # Get reports from manager
+        news_analysis_report = self.report_manager.get_report("News Analysis Report")
+        vc_twitter_analysis_report = self.report_manager.get_report("VC Twitter Analysis Report")
 
         inputs = f"""
         # **Company Data:**
@@ -389,33 +352,31 @@ class OutReachAutomationNodes:
         """
         
         prompt = COMPANY_PROFILE_REPORT_PROMPT.format(
-            company_name=state["current_lead"].vc_company_data.name,
-            industry=state["current_lead"].vc_company_data.industry,
+            company_name=self.vc_company_data.name,
+            industry=self.vc_company_data.industry,
             date=get_current_date()
         )
-        company_profile_report = invoke_llm(
+        company_profile = invoke_llm(
             system_prompt=prompt, 
             user_message=inputs,
             model=AI_MODEL
         ) 
         
-        company_profile_report = Report(
+        self.report_manager.add_report(Report(
             title="Company Profile Report",
-            content=company_profile_report,
+            content=company_profile,
             is_markdown=True
-        )
-        return {"reports": [company_profile_report]}
+        ))
+        return {}
     
     def generate_custom_outreach_report(self, state: GraphState):
         print(Fore.YELLOW + "----- Crafting Custom outreach report based on gathered information -----\n" + Style.RESET_ALL)
         
-        # Load reports
-        reports = state["reports"]
-        general_lead_search_report = get_report(reports, "General Lead Research Report")
-        global_research_report = get_report(reports, "Global Lead Analysis Report")
+        # Get reports from manager
+        general_lead_search_report = self.report_manager.get_report("General Lead Research Report")
+        global_research_report = self.report_manager.get_report("Global Lead Analysis Report")
         
-        # TODO Create better description to fetch accurate similar case study using RAG
-        # get relevant case study
+        # Get relevant case study
         case_study_report = fetch_similar_case_study(general_lead_search_report)
         
         inputs = f"""
@@ -430,15 +391,14 @@ class OutReachAutomationNodes:
         {case_study_report}
         """
         
-        # Generate report
+        # Generate initial report
         custom_outreach_report = invoke_llm(
             system_prompt=GENERATE_OUTREACH_REPORT_PROMPT,
             user_message=inputs,
             model=AI_MODEL
         )
         
-        # TODO Find better way to include correct links into the final report
-        # Proof read generated report
+        # Proof read and add correct links
         inputs = f"""
         {custom_outreach_report}
 
@@ -446,7 +406,7 @@ class OutReachAutomationNodes:
 
         **Correct Links:**
 
-        ** Our website link**: {state["our_company_data"].website}
+        ** Our website link**: {self.our_company_data.website}
         """
         
         # Call our editor/proof-reader agent
@@ -462,11 +422,17 @@ class OutReachAutomationNodes:
             doc_title="Outreach Report",
             folder_name=self.drive_folder_name,
             make_shareable=True,
-            folder_shareable=True, # Set to false if only personal or true if with a team
+            folder_shareable=True,
             markdown=True
         )  
         
-        # print(f"new_doc: {new_doc}")
+        # Add report to manager for reference
+        self.report_manager.add_report(Report(
+            title="Custom Outreach Report",
+            content=revised_outreach_report,
+            is_markdown=True
+        ))
+        
         return {
             "custom_outreach_report_link": new_doc["shareable_url"],
             "reports_folder_link": new_doc["folder_url"]
@@ -475,43 +441,35 @@ class OutReachAutomationNodes:
     def generate_personalized_email(self, state: GraphState):
         """
         Generate a personalized email for the lead.
-
-        @param state: The current state of the application.
-        @return: Updated state with the generated email.
         """
         print(Fore.YELLOW + "----- Generating personalized email -----\n" + Style.RESET_ALL)
         
-        # Load reports
-        reports = state["reports"]
-        general_lead_search_report = get_report(reports, "General Lead Research Report")
+        # Get report from manager
+        general_lead_search_report = self.report_manager.get_report("General Lead Research Report")
         
-        vc_company_data = state["current_lead"].vc_company_data
         lead_data = f"""
         # **Company & Lead Information:**
 
         {general_lead_search_report}
 
         # Company Details:
-        Company Name: {vc_company_data.name}
-        Industry: {vc_company_data.industry}
-        Website: {vc_company_data.website}
-        Value Proposition: {vc_company_data.description}
+        Company Name: {self.vc_company_data.name}
+        Industry: {self.vc_company_data.industry}
+        Website: {self.vc_company_data.website}
+        Value Proposition: {self.vc_company_data.description}
 
         # Report Link:
         {state["custom_outreach_report_link"]}
         """
-        our_company = state["our_company_data"]
-        target_company = state["current_lead"].vc_company_data
-        lead = state["current_lead"]
 
         email_context = {
-            "first_name": lead.name.split()[0],
-            "company_name": our_company.name,
-            "company_description": our_company.description,
-            "value_proposition": our_company.value_proposition,
-            "target_market": our_company.target_market,
-            "key_benefits": our_company.benefits,
-            "sender_name": our_company.name
+            "first_name": self.current_lead.name.split()[0],
+            "company_name": self.our_company_data.name,
+            "company_description": self.our_company_data.description,
+            "value_proposition": self.our_company_data.value_proposition,
+            "target_market": self.our_company_data.target_market,
+            "key_benefits": self.our_company_data.benefits,
+            "sender_name": self.our_company_data.name
         }
 
         personalize_email_prompt = PERSONALIZE_EMAIL_PROMPT.format(**email_context)
@@ -526,32 +484,29 @@ class OutReachAutomationNodes:
         subject = output.subject
         personalized_email = output.email
         
-        # Get lead email
-        email = state["current_lead"].email
-        
         # Create draft email
         gmail = GmailTools()
         gmail.create_draft_email(
-            recipient=email,
+            recipient=self.current_lead.email,
             subject=subject,
             email_content=personalized_email
         )
         
-        # Send email directly
+        # Send email directly if enabled
         if SEND_EMAIL_DIRECTLY:
             gmail.send_email(
                 recipient=TEST_EMAIL,
-                subject=f"{subject}-{email}",
+                subject=f"{subject}-{self.current_lead.email}",
                 email_content=personalized_email
             )
         
-        # Save email with reports for reference
-        personalized_email_doc = Report(
+        # Save email to report manager
+        self.report_manager.add_report(Report(
             title="Personalized Email",
             content=personalized_email,
             is_markdown=False
-        )
-        return {"reports": [personalized_email_doc]}
+        ))
+        return {}
 
     def generate_interview_script(self, state: GraphState):
         print(Fore.YELLOW + "----- Generating interview script -----\n" + Style.RESET_ALL)
@@ -624,8 +579,8 @@ class OutReachAutomationNodes:
     def save_reports_to_google_docs(self, state: GraphState):
         print(Fore.YELLOW + "----- Save Reports to Google Docs -----\n" + Style.RESET_ALL)
         
-        # Load all reports
-        reports = state["reports"]
+        # Get all reports from the report manager
+        reports = self.report_manager.get_all_reports()
         
         # Ensure reports are saved locally
         save_reports_locally(reports, self.drive_folder_name)
@@ -640,6 +595,8 @@ class OutReachAutomationNodes:
                     markdown=report.is_markdown
                 )
 
+        # Clear reports after saving
+        self.report_manager.clear_reports()
         return {"reports_folder_link": self.drive_folder_name}
 
     def update_CRM(self, state: GraphState):

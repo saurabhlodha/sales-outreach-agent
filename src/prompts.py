@@ -146,6 +146,56 @@ Your tasks will include the following:
 * **Only include relevant news from the last {number_months} months. Today’s date is {date}.**
 """
 
+ANALYZE_VC_FIRM_WEB = """
+### Role
+You are an expert VC firm analyst specializing in extracting structured information about venture capital firms from their web presence (LinkedIn, website, etc.).
+
+### Task
+Analyze the provided web content and extract structured information about the VC firm to help match startups with the most suitable VCs and enable tailored outreach.
+
+### Instructions
+- If no data is available, output only the empty structure with default values
+- Use the available data from all sources; do not assume or invent information
+- Focus on extracting factual, verifiable information
+- Keep the tone neutral and objective
+
+### Required Information
+1. Company Name and Description
+2. Core Investment Focus Areas
+3. Portfolio Companies (notable ones)
+4. Investment Stages
+5. Typical Investment Size Range
+6. Geographic Focus Regions
+7. Investment Thesis/Criteria
+8. Recent Successful Exits
+9. Industry/Domain Preferences
+10. Technology Areas of Interest
+11. Value-Add Services/Support
+12. ESG/Impact Investment Focus
+13. Key Partners/Team Members
+14. Investment Process
+
+### Output Format
+Your response must be a valid JSON object with the following structure:
+{
+    "company_name": "string",
+    "description": "string",
+    "investment_focus": ["string"],
+    "portfolio_companies": ["string"],
+    "investment_stages": ["string"],
+    "investment_size": "string",
+    "geographic_focus": ["string"],
+    "investment_thesis": "string",
+    "recent_exits": ["string"],
+    "industry": "string",
+    "tech_stack": ["string"],
+    "value_add": ["string"],
+    "esg_impact": "string",
+    "key_partners": ["string"],
+    "investment_process": "string"
+}
+"""
+
 COMPANY_PROFILE_REPORT_PROMPT = """
 # **Role:**  
 You are a Professional Business Analyst specializing in {industry} market analysis and investment opportunities. Your role involves analyzing company data, market positioning, and growth potential to craft detailed reports for potential investors and strategic partners.  
@@ -316,10 +366,10 @@ Our services include:
 """
 
 PITCH_DECK_ANALYSIS_PROMPT = """
-You are an expert in analyzing company pitch decks. Review the provided pitch deck content and extract key information about the company.
+You are an expert in analyzing startup pitch decks to assess venture alignment, extract key insights, and support investor targeting. Based on the content provided, extract structured data to match the startup with the most suitable venture capital firms and enable tailored outreach.
 
 # Task
-Extract and summarize the following information in a structured format:
+Extract and summarize the following structured information from the pitch deck:
 
 1. Company Name and Description
 2. Core Products/Services
@@ -327,7 +377,15 @@ Extract and summarize the following information in a structured format:
 4. Unique Value Proposition
 5. Key Benefits/Features
 6. Industry/Domain
-7. Sales Approach
+7. Sales/Business Model
+8. Funding Stage (e.g., Pre-Seed, Seed, Series A, etc.)
+9. Geographic Focus or HQ Location
+10. Technology Stack or Innovation Areas (e.g., AI, Blockchain, Robotics)
+11. Business Keywords (max 10): Extract keywords useful for VC matching (e.g., "carbon capture", "telehealth", "generative AI")
+12. Partnership Signals: Highlight notable customers, partnerships, or pilots that can support credibility
+13. Competitive Differentiators: What sets this company apart in the market?
+14. VC Fit Criteria: Traits or themes that would attract VC attention (e.g., scalability, recurring revenue, strong team)
+15. Social/ESG Impact (if any): Any positive environmental, social, or governance elements
 
 # Output Format
 CRITICAL: Your response must start with an opening curly brace '{' and end with a closing curly brace '}'. Do not include ANY text before or after the JSON object.
@@ -342,7 +400,62 @@ Example of what to return (notice it starts with '{' and ends with '}'):
     "value_proposition": "string",
     "benefits": ["string"],
     "industry": "string",
-    "sales_approach": "string"
+    "sales_approach": "string",
+    "funding_stage": "string",
+    "geography": "string",
+    "tech_stack": ["string"],
+    "keywords": ["string"],
+    "partnerships": ["string"],
+    "differentiators": ["string"],
+    "vc_fit": ["string"],
+    "esg_impact": "string"
+}
+"""
+
+VC_FIRM_ANALYSIS_PROMPT = """
+You are an expert in analyzing venture capital firms to assess investment alignment and support startup targeting. Based on the content provided, extract structured data to help match startups with the most suitable VCs and enable tailored outreach.
+
+# Task
+Extract and summarize the following structured information about the VC firm:
+
+1. Company Name and Description
+2. Core Investment Focus Areas
+3. Portfolio Companies (notable ones)
+4. Investment Stages (e.g., Seed, Series A, Growth)
+5. Typical Investment Size Range
+6. Geographic Focus Regions
+7. Investment Thesis/Criteria
+8. Recent Successful Exits
+9. Industry/Domain Preferences
+10. Technology Areas of Interest
+11. Value-Add Services/Support
+12. ESG/Impact Investment Focus (if any)
+13. Key Partners/LPs (if public)
+14. Investment Process/Approach
+15. Portfolio Success Metrics
+
+# Output Format
+CRITICAL: Your response must start with an opening curly brace '{' and end with a closing curly brace '}'. Do not include ANY text before or after the JSON object.
+Do not include the word 'json' or any other text. Just return the raw JSON object.
+
+Example of what to return (notice it starts with '{' and ends with '}'):
+{
+    "company_name": "string",
+    "description": "string",
+    "investment_focus": ["string"],
+    "portfolio_companies": ["string"],
+    "investment_stages": ["string"],
+    "investment_size": "string",
+    "geographic_focus": ["string"],
+    "investment_thesis": "string",
+    "recent_exits": ["string"],
+    "industry": "string",
+    "tech_stack": ["string"],
+    "value_add": ["string"],
+    "esg_impact": "string",
+    "key_partners": ["string"],
+    "investment_process": "string",
+    "success_metrics": ["string"]
 }
 """
 
