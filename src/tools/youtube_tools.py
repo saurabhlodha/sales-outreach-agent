@@ -13,7 +13,7 @@ def get_channel_id_by_name(channel_name):
     """
     Get the channel ID from the channel name.
     """
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=os.getenv("YOUTUBE_API_KEY"))
+    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=os.getenv("GOOGLE_API_KEY"))
     request = youtube.search().list(
         part="snippet",
         q=channel_name,
@@ -31,7 +31,7 @@ def get_channel_videos_stats(channel_id):
     Get total videos count, details of the last 15 videos, 
     and average views and likes for all videos.
     """
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=os.getenv("YOUTUBE_API_KEY"))
+    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=os.getenv("GOOGLE_API_KEY"))
     
     # Fetch channel statistics for the total video count
     channel_request = youtube.channels().list(

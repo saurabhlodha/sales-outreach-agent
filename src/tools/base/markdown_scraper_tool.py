@@ -13,7 +13,7 @@ def scrape_website_to_markdown(url: str) -> str:
     # Make the HTTP request
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
-        raise Exception(f"Failed to fetch the URL. Status code: {response.status_code}")
+        raise Exception(f"Failed to fetch the URL {url}. Status code: {response.status_code}")
 
     # Parse the HTML
     soup = BeautifulSoup(response.text, "html.parser")

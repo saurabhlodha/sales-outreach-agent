@@ -1,0 +1,9 @@
+.env
+.idea/
+src/__pycache__/
+src/tools/__pycache__/
+src/tools/*/__pycache__/
+reports/*
+credentials.json
+token.json
+database/*/*.bin

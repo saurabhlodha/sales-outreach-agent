@@ -1,7 +1,11 @@
+import os
 from src.utils import invoke_llm
 from .base.search_tools import google_search
 from .base.linkedin_tools import extract_linkedin_url, scrape_linkedin
+from colorama import Fore, Style
 
+# Model to use
+AI_MODEL = os.environ['AI_MODEL']
 
 SUMMARIZE_LINKEDIN_PROFILE = """
 # Role  
@@ -32,7 +36,7 @@ def extract_company_name(email):
     except IndexError:
         return "Company not found"
 
-def research_lead_on_linkedin(lead_name, lead_email):
+def research_lead_on_linkedin(lead_name, lead_email, lead_linkedin_url=""):
     """
     Searches for the lead's LinkedIn profile based on the lead name and company name.
     
@@ -41,15 +45,19 @@ def research_lead_on_linkedin(lead_name, lead_email):
     """
     # extract company name from pro email
     company_name = extract_company_name(lead_email)
-        
-    # Find lead LinkedIn URL by searching on Google 'LinkedIn {{lead name}} {{company name}}'
-    query = f"LinkedIn {lead_name} {company_name}"
-    search_results = google_search(query)
-    lead_linkedin_url = extract_linkedin_url(search_results)
+    
+    # If lead linkedin url is not provided, find it on Google
+    if not lead_linkedin_url:
+        # Find lead LinkedIn URL by searching on Google 'LinkedIn {{lead name}} {{company name}}'
+        query = f"LinkedIn {lead_name} {company_name}"
+        search_results = google_search(query)
+        lead_linkedin_url = extract_linkedin_url(search_results)
+
     if not lead_linkedin_url:
         return "Lead LinkedIn URL not found."
 
     # Scrape lead LinkedIn profile
+    print(Fore.BLUE + f"Lead LinkedIn URL: {lead_linkedin_url}" + Style.RESET_ALL)
     linkedin_data = scrape_linkedin(lead_linkedin_url)
     if "data" not in linkedin_data:
         return "LinkedIn profile not found"
@@ -133,7 +141,7 @@ def research_lead_on_linkedin(lead_name, lead_email):
     profile_summary = invoke_llm(
         system_prompt=SUMMARIZE_LINKEDIN_PROFILE, 
         user_message=inputs,
-        model="gemini-1.5-flash"
+        model=AI_MODEL
     )
     
     return (

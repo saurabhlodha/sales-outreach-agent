@@ -5,6 +5,13 @@ from langchain_core.output_parsers import StrOutputParser
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+from .config import setup_google_ai
+
+# Model to use
+AI_MODEL = os.environ['AI_MODEL']
+
+# Configure Google AI
+setup_google_ai()
 
 # Set the scopes for Google API
 SCOPES = [
@@ -24,6 +31,7 @@ def get_current_date():
 def get_google_credentials():
     creds = None
     if os.path.exists('token.json'):
+        print("Token file exists.")
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
@@ -44,12 +52,13 @@ def get_report(reports, report_name: str):
             return report.content
     return ""
 
-def save_reports_locally(reports):
+def save_reports_locally(reports, folder_name):
     # Define the local folder path
-    reports_folder = "reports"
-    
+    reports_folder = f"reports/{folder_name}"
+
     # Create folder if it does not exist
     if not os.path.exists(reports_folder):
+        print(f"Creating folder: {reports_folder}")
         os.makedirs(reports_folder)
     
     # Save each report as a file in the folder
@@ -77,8 +86,8 @@ def get_llm_by_provider(llm_provider, model):
 def invoke_llm(
     system_prompt,
     user_message,
-    model="gemini-1.5-flash",  # Specify the model name according to the provider
-    llm_provider="google",  # By default use Google as provider
+    model=AI_MODEL,  # Specify the model name according to the provider
+    llm_provider="openai",  # By default use OpenAI as provider
     response_format=None
 ):
     messages = [

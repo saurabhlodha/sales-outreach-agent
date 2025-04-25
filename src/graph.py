@@ -25,18 +25,15 @@ class OutReachAutomation:
         graph.add_node("check_for_remaining_leads", nodes.check_for_remaining_leads)
 
         # Research phase: gather data and insights about the lead
+        graph.add_node("gather_lead_company_data", nodes.gather_lead_company_data)
         graph.add_node("fetch_linkedin_profile_data", nodes.fetch_linkedin_profile_data)
+        graph.add_node("analyze_lead_social_profile", nodes.analyze_lead_social_profile)
         graph.add_node("review_company_website", nodes.review_company_website)
-        graph.add_node("collect_company_information", nodes.collect_company_information)
-        graph.add_node("analyze_blog_content", nodes.analyze_blog_content)
         graph.add_node("analyze_social_media_content", nodes.analyze_social_media_content)
         graph.add_node("analyze_recent_news", nodes.analyze_recent_news)
-        graph.add_node("generate_full_lead_research_report", nodes.generate_full_lead_research_report)
-        graph.add_node("generate_digital_presence_report", nodes.generate_digital_presence_report)
-        graph.add_node("score_lead", nodes.score_lead)
+        graph.add_node("generate_company_profile_report", nodes.generate_company_profile_report)
 
         # Outreach preparation phase
-        graph.add_node("create_outreach_materials", nodes.create_outreach_materials)
         graph.add_node("generate_custom_outreach_report", nodes.generate_custom_outreach_report)
         graph.add_node("generate_personalized_email", nodes.generate_personalized_email)
         graph.add_node("generate_interview_script", nodes.generate_interview_script)
@@ -59,41 +56,28 @@ class OutReachAutomation:
             "check_for_remaining_leads",
             nodes.check_if_there_more_leads,
             {
-                "Found leads": "fetch_linkedin_profile_data",  # Proceed if leads are found
+                "Found leads": "gather_lead_company_data",  # Proceed if leads are found
                 "No more leads": END  # Terminate if no leads remain
             }
         )
 
         # Research phase transitions
-        graph.add_edge("fetch_linkedin_profile_data", "review_company_website")
-        graph.add_edge("review_company_website", "collect_company_information")
+        graph.add_edge("gather_lead_company_data", "fetch_linkedin_profile_data")
+        graph.add_edge("fetch_linkedin_profile_data", "analyze_lead_social_profile")
+        graph.add_edge("analyze_lead_social_profile", "review_company_website")
 
         # Collect company information and branch into various analyses
-        graph.add_edge("collect_company_information", "analyze_blog_content")
-        graph.add_edge("collect_company_information", "analyze_social_media_content")
-        graph.add_edge("collect_company_information", "analyze_recent_news")
+        graph.add_edge("review_company_website", "analyze_social_media_content")
+        graph.add_edge("review_company_website", "analyze_recent_news")
 
         # Analysis results converge into generating reports
-        graph.add_edge("analyze_blog_content", "generate_digital_presence_report")
-        graph.add_edge("analyze_social_media_content", "generate_digital_presence_report")
-        graph.add_edge("analyze_recent_news", "generate_digital_presence_report")
-        graph.add_edge("generate_digital_presence_report", "generate_full_lead_research_report")
-
-        # Scoring phase with conditional qualification check
-        graph.add_edge("generate_full_lead_research_report", "score_lead")
-        graph.add_conditional_edges(
-            "score_lead",
-            nodes.check_if_qualified,
-            {
-                "qualified": "generate_custom_outreach_report",  # Proceed if lead is qualified
-                "not qualified": "save_reports_to_google_docs"  # Save reports and exit if lead is unqualified 
-            }
-        )
+        graph.add_edge("analyze_social_media_content", "generate_company_profile_report")
+        graph.add_edge("analyze_recent_news", "generate_company_profile_report")
+        graph.add_edge("generate_company_profile_report", "generate_custom_outreach_report")
 
         # Outreach material creation
-        graph.add_edge("generate_custom_outreach_report", "create_outreach_materials")
-        graph.add_edge("create_outreach_materials", "generate_personalized_email")
-        graph.add_edge("create_outreach_materials", "generate_interview_script")
+        graph.add_edge("generate_custom_outreach_report", "generate_personalized_email")
+        graph.add_edge("generate_custom_outreach_report", "generate_interview_script")
 
         # Await completion and finalize reports
         graph.add_edge("generate_personalized_email", "await_reports_creation")
